@@ -493,3 +493,10 @@ blockquote.pull{font-weight:400;color:var(--ink)}
 .lang a:hover{color:var(--ink);border-bottom-color:var(--bronze-soft)}
 .lang .cur{color:var(--bronze);padding:6px 2px;border-bottom:1px solid var(--bronze)}
 .lang i{font-style:normal;color:var(--hairline)}
+
+.cbody i{white-space:nowrap}
+.cite a{color:var(--bronze);word-break:break-all;text-decoration:none;border-bottom:1px solid var(--bronze-soft)}
+.cite p{display:flex;flex-direction:column;align-items:flex-start;gap:1rem}
+.copy-cite{font:400 1.02rem/1 var(--serif);letter-spacing:.03em;color:var(--bronze);background:transparent;border:1px solid var(--bronze);padding:.6rem 1.1rem;cursor:pointer}
+.copy-cite:hover{background:var(--bronze);color:var(--paper)}
+@media (max-width:640px){.cbody .vw{display:none}}

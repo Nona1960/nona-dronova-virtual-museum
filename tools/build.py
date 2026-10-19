@@ -385,7 +385,7 @@ def coll_card(c, lang, path=None):
     th = img(o, lang, sizes="(max-width:640px) 45vw, 300px") if o else ""
     return (f'<a class="ccard" href="{url(lang, path or "/collections/" + c["slug"] + "/")}" style="--accent:{c["accent"]}">'
             f'<span class="thumb">{th}</span><span class="cbody"><b>{e(L(lang, c["ru"], c["en"]))}</b>'
-            f'<span>{e(L(lang, c["lead_ru"], c["lead_en"]))}</span><i>{L(lang, "Смотреть", "View")} {n} {L(lang, plural_ru(n), "works" if n != 1 else "work")} →</i></span></a>')
+            f'<span>{e(L(lang, c["lead_ru"], c["lead_en"]))}</span><i><span class="vw">{L(lang, "Смотреть", "View")} </span>{n}&nbsp;{L(lang, plural_ru(n), "works" if n != 1 else "work")}&nbsp;→</i></span></a>')
 
 def plural_ru(n):
     n10, n100 = n % 10, n % 100
@@ -640,7 +640,7 @@ def build_theory(lang):
 <div class="essay-body">{render_blocks(x["blocks"], lang)}</div>
 <footer class="essay-foot"><section class="others"><h2>{L(lang, "Другие исследования", "Further studies")}</h2><ol class="lib-list">{"".join(lib_entry(o_, lang) for o_ in others)}</ol>
 <p><a class="lib-read" href="{url(lang, "/theory/")}">{L(lang, "Вся библиотека", "The whole library")} →</a></p></section>
-<section class="cite"><h3>{L(lang, "Как цитировать", "How to cite")}</h3><p>{cite(lang, x, p)}</p></section></footer></article>'''
+<section class="cite"><h3>{L(lang, "Как цитировать", "How to cite")}</h3><p>{cite(lang, x, p)}</p></section></footer></article>{CITE_JS}'''
         ld = [{"@type": "Article", "headline": L(lang, x["ru"], x["en"]), "alternativeHeadline": sub, "abstract": L(lang, m[3], m[4]), "genre": L(lang, m[0], m[1]),
                "inLanguage": lang, "url": absu(url(lang, p)), "mainEntityOfPage": absu(url(lang, p)),
                "author": {"@id": SITE_URL + "/#nona"} if x["status"] == "author" else {"@type": "Organization", "name": P.SITE[lang]},
@@ -658,11 +658,21 @@ def build_theory(lang):
          body, crumbs=[home_crumb(lang), (L(lang, TH.LIB_TITLE_RU, TH.LIB_TITLE_EN), "/theory/"), (L(lang, "Глоссарий", "Glossary"), p)], ld=ld)
 
 def cite(lang, x, p):
+    u = absu(url(lang, p))
     if lang == "ru":
         a = "Дронова Н." if x["status"] == "author" else "Виртуальный музей Ноны Дроновой."
-        return e(f"{a} {x['ru']} // Виртуальный музей Ноны Дроновой [Электронный ресурс]. 2026. URL: {absu(p)} (дата обращения: ДД.ММ.ГГГГ).")
-    a = "Dronova, N." if x["status"] == "author" else "Nona Dronova Virtual Art Museum."
-    return e(f"{a} (2026) ‘{x['en']}’, Nona Dronova Virtual Art Museum. Available at: {absu('/en' + p)} (Accessed: DD Month YYYY).")
+        pre, post = f"{a} {x['ru']} // Виртуальный музей Ноны Дроновой [Электронный ресурс]. 2026. URL: ", " (дата обращения: <span class=\"cdate\" data-f=\"ru\">ДД.ММ.ГГГГ</span>)."
+    else:
+        a = "Dronova, N." if x["status"] == "author" else "Nona Dronova Virtual Art Museum."
+        pre, post = f"{a} (2026) ‘{x['en']}’, Nona Dronova Virtual Art Museum. Available at: ", " (Accessed: <span class=\"cdate\" data-f=\"en\">DD Month YYYY</span>)."
+    return (f'<span class="ctext">{e(pre)}<a href="{u}">{e(u)}</a>{post}</span>'
+            f'<button type="button" class="copy-cite" data-done="{L(lang, "Скопировано", "Copied")}">{L(lang, "Скопировать ссылку для цитирования", "Copy citation")}</button>')
+
+CITE_JS = """<script>
+(()=>{const d=new Date();document.querySelectorAll('.cdate').forEach(s=>{s.textContent=s.dataset.f==='ru'?d.toLocaleDateString('ru-RU'):d.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})});
+document.querySelectorAll('.copy-cite').forEach(b=>b.addEventListener('click',async()=>{const t=b.parentElement.querySelector('.ctext').textContent;
+try{await navigator.clipboard.writeText(t);const o=b.textContent;b.textContent=b.dataset.done;setTimeout(()=>b.textContent=o,1800)}catch(e){const r=document.createRange();r.selectNodeContents(b.parentElement.querySelector('.ctext'));const s=getSelection();s.removeAllRanges();s.addRange(r)}}))})();
+</script>"""
 
 # ------------------------------------------------------------------ feature pages
 def build_textiles(lang):
