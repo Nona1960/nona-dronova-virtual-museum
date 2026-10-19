@@ -717,13 +717,11 @@ def build_simple(lang):
     tp = "".join(f'<li>{e(L(lang, a, b))} <span class="badge b-project">{L(lang, "Планируется", "Planned")}</span></li>' for a, b in R["topics"])
     es = "".join(f'<li><a href="{url(lang, "/theory/" + x["slug"] + "/")}">{e(L(lang, x["ru"], x["en"]))}</a> {badge(x["status"], lang)}</li>' for x in ESSAYS + [CONTEXT])
     body = f'''<section class="wrap intro"><h1>{e(R["h1_" + lang])}</h1><p class="lead">{e(R["text_" + lang])}</p></section>
-<section class="wrap grid2"><div><h2>{L(lang, "Опубликованные тексты", "Published texts")}</h2><ul class="facts-list">{es}</ul></div>
-<div><h2>{L(lang, "Темы будущих публикаций", "Topics of forthcoming publications")}</h2><ul class="facts-list">{tp}</ul>
-<h2>{L(lang, "Четыре уровня текста", "Four levels of text")}</h2><ul class="facts-list">{lv}</ul></div></section>
+<section class="wrap narrow"><h2>{L(lang, "Опубликованные тексты", "Published texts")}</h2><ul class="facts-list">{es}</ul></section>
 <section class="band"><div class="wrap narrow"><h2>{L(lang, "Открытые данные", "Open data")}</h2><p>{L(lang, "Каталог музея доступен в машиночитаемом виде:", "The museum's catalogue is available in machine-readable form:")} <a href="/data/catalog.json">catalog.json</a>. {L(lang, "Поля записей опираются на элементы Dublin Core (title, creator, date, format, source, rights); полная совместимость с CIDOC CRM не заявляется.", "Record fields draw on Dublin Core elements (title, creator, date, format, source, rights); full CIDOC CRM compliance is not claimed.")}</p></div></section>'''
     page(lang, path, "research", L(lang, "Исследования и публикации", "Research and Publications"),
-         L(lang, "Тексты и исследования о творчестве Ноны Дроновой, темы будущих публикаций, уровни достоверности и открытые данные каталога.",
-           "Texts and research on the work of Nona Dronova, forthcoming topics, levels of reliability and the catalogue's open data."),
+         L(lang, "Тексты и исследования о творчестве Ноны Дроновой: теория современной живописи, ботанический экспрессионизм и открытые данные каталога.",
+           "Texts and research on the work of Nona Dronova: the theory of contemporary painting, botanical expressionism and the catalogue's open data."),
          body, crumbs=[home_crumb(lang), (L(lang, "Исследования", "Research"), path)])
     X = P.EXHIBITIONS; path = "/exhibitions/"
     its = ""
