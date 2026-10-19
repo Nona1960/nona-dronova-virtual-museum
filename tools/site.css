@@ -502,3 +502,5 @@ blockquote.pull{font-weight:400;color:var(--ink)}
 @media (max-width:640px){.cbody .vw{display:none}}
 
 .questions .qh{font-size:clamp(1.3rem,2vw,1.55rem);margin:0 0 .5rem;color:var(--bronze);font-weight:400}
+
+.contact-mail{font-size:1.45rem;letter-spacing:.02em;color:var(--ink);user-select:all;margin:.2rem 0 1rem}

@@ -228,8 +228,8 @@ EXHIBITIONS = dict(
 
 CONTACT = dict(
   h1_ru="Контакты и сотрудничество", h1_en="Contact and Collaboration",
-  text_ru="Виртуальный музей Ноны Дроновой открыт для профессионального диалога об искусстве, художественном образовании, цифровом наследии и исследовательских проектах. Для предложений о сотрудничестве, выставках, публикациях и образовательных инициативах используйте подтверждённые контактные данные автора.",
-  text_en="The Nona Dronova Virtual Museum is open to professional dialogue on art, art education, digital heritage and research projects. For proposals regarding collaboration, exhibitions, publications and educational initiatives, please use the artist's verified contact details.",
+  text_ru="Виртуальный музей Ноны Дроновой открыт для профессионального диалога об искусстве, художественном образовании, цифровом наследии и исследовательских проектах. Для предложений о сотрудничестве, выставках, публикациях и образовательных инициативах напишите автору по электронной почте.",
+  text_en="The Nona Dronova Virtual Museum is open to professional dialogue on art, art education, digital heritage and research projects. For proposals regarding collaboration, exhibitions, publications and educational initiatives, please write to the artist by email.",
 )
 
 ARCHIVES = [  # the artist's existing digital archives (verified repositories)

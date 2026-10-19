@@ -837,8 +837,8 @@ def build_simple(lang):
          body, crumbs=[home_crumb(lang), (L(lang, "Выставки", "Exhibitions"), path)])
     C = P.CONTACT; path = "/contact/"
     body = f'''<section class="wrap intro"><h1>{e(C["h1_" + lang])}</h1><p class="lead">{e(C["text_" + lang])}</p>
-<aside class="note-box">{L(lang, "Подтверждённые контактные данные будут опубликованы после согласования с автором.", "Verified contact details will be published once agreed with the artist.")}</aside>
-<h2>{L(lang, "Сайты автора", "The artist's websites")}</h2><ul class="facts-list"><li><a href="https://nona-dronova-art-studio.vercel.app/" rel="noopener">Nona Dronova Art Studio</a></li><li><a href="https://github.com/Nona1960" rel="noopener">GitHub — Nona1960</a></li></ul></section>'''
+<h2>{L(lang, "Электронная почта", "Email")}</h2><p class="contact-mail" translate="no">dronovanona@mail.ru</p>
+<h2>{L(lang, "Сайт автора", "The artist's website")}</h2><ul class="facts-list"><li><a href="https://nona-dronova-art-studio.vercel.app/" rel="noopener">Nona Dronova Art Studio</a></li></ul></section>'''
     page(lang, path, "contact", L(lang, "Контакты и сотрудничество", "Contact and Collaboration"),
          L(lang, "Сотрудничество с виртуальным музеем Ноны Дроновой: выставки, публикации, образовательные инициативы и цифровое наследие.",
            "Collaboration with the Nona Dronova Virtual Museum: exhibitions, publications, educational initiatives and digital heritage."),
