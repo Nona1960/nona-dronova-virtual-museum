@@ -500,3 +500,5 @@ blockquote.pull{font-weight:400;color:var(--ink)}
 .copy-cite{font:400 1.02rem/1 var(--serif);letter-spacing:.03em;color:var(--bronze);background:transparent;border:1px solid var(--bronze);padding:.6rem 1.1rem;cursor:pointer}
 .copy-cite:hover{background:var(--bronze);color:var(--paper)}
 @media (max-width:640px){.cbody .vw{display:none}}
+
+.questions .qh{font-size:clamp(1.3rem,2vw,1.55rem);margin:0 0 .5rem;color:var(--bronze);font-weight:400}

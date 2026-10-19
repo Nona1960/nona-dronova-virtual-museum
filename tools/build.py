@@ -167,7 +167,8 @@ def og_image(oid):
 # ------------------------------------------------------------------ JSON-LD
 PERSON = {"@type": "Person", "@id": SITE_URL + "/#nona", "name": "Nona Dronova", "alternateName": "Нона Дронова",
           "jobTitle": "Artist", "memberOf": {"@type": "Organization", "name": "Union of Artists of Russia"},
-          "url": SITE_URL + "/about/", "sameAs": ["https://nona-dronova-art-studio.vercel.app/", "https://github.com/Nona1960"]}
+          "url": SITE_URL + "/about/", "knowsAbout": ["Botanical painting", "Botanical Expressionism", "Textile art", "Silver jewellery", "Gemmology"],
+          "sameAs": ["https://orcid.org/0009-0007-4867-9074", "https://nona-dronova-art-studio.vercel.app/", "https://github.com/Nona1960", "https://zenodo.org/search?q=%22Nona%20Dronova%22"]}
 SERGEY = {"@type": "Person", "@id": SITE_URL + "/#sergey", "name": "Sergey Dronov", "alternateName": "Сергей Дронов",
           "spouse": {"@id": SITE_URL + "/#nona"}, "memberOf": {"@type": "Organization", "name": "Union of Artists of Russia"}}
 WEBSITE = {"@type": "WebSite", "@id": SITE_URL + "/#site", "url": SITE_URL + "/", "name": P.SITE["en"],
@@ -183,7 +184,11 @@ def crumbs_ld(lang, crumbs):
 CSS_V = ""
 def head(lang, path, ttl, desc, og=None, ld=None, extra=""):
     brand = L(lang, "Музей Ноны Дроновой", "Nona Dronova Museum")
-    full = f"{ttl} | {brand}" if path != "/" else f"{P.SITE[lang]} — {P.SITE['tag_' + lang]}"
+    if path == "/": full = ttl
+    else:
+        full = f"{ttl} | {brand}"
+        if len(full) > 65: full = ttl if len(ttl) <= 68 else ttl[:66].rsplit(" ", 1)[0] + "…"
+    if len(desc) > 165: desc = desc[:162].rsplit(" ", 1)[0].rstrip(",;:—–- ") + "…"
     og_url = absu(og or og_image(HERO_ID))
     ru, en = absu(url("ru", path)), absu(url("en", path))
     graph = [WEBSITE, PERSON, SERGEY] + (ld or [])
@@ -377,7 +382,7 @@ def build_home(lang):
 </section>'''
     desc = L(lang, "Живопись, сад, текстиль и серебро Ноны Дроновой: коллекции, теория ботанического экспрессионизма, сад «Папоротники и мох» и научный каталог произведений.",
              "Paintings, garden, textiles and silver by Nona Dronova: collections, the theory of botanical expressionism, the Ferns and Moss garden and a scholarly catalogue of works.")
-    page(lang, "/", "home", P.SITE[lang], desc, body, og=og_image(HERO_ID), images=[HERO_ID])
+    page(lang, "/", "home", L(lang, "Нона Дронова — виртуальный музей искусства", "Nona Dronova — Virtual Art Museum"), desc, body, og=og_image(HERO_ID), images=[HERO_ID])
 
 def coll_card(c, lang, path=None):
     o = cover(c["slug"]); n = len(coll_works(c["slug"]))
@@ -583,7 +588,7 @@ def render_blocks(blocks, lang):
                 f'<li><b>{L(lang, "Принцип", "Principle")} {i+1}</b><h3>{e(L(lang, a, bb))}</h3><p>{e(L(lang, c, d))}</p></li>' for i, (a, bb, c, d) in enumerate(b[1])) + "</ol>"
         elif t == "questions":
             qs = b[1] if lang == "ru" else b[2]
-            out += f'<aside class="questions"><h3>{L(lang, "Вопросы для наблюдения", "Questions for looking")}</h3><ol>' + "".join(f"<li>{e(q)}</li>" for q in qs) + "</ol></aside>"
+            out += f'<aside class="questions"><h2 class="qh">{L(lang, "Вопросы для наблюдения", "Questions for looking")}</h2><ol>' + "".join(f"<li>{e(q)}</li>" for q in qs) + "</ol></aside>"
         elif t == "works": out += works_block(b[1], lang)
         elif t == "interiors": out += interiors_section(lang, h=False)
     return out
@@ -925,7 +930,8 @@ def build_object(o, lang):
     ld_obj = {"@type": "VisualArtwork" if o["kind"] == "artwork" else "Photograph", "name": ttl, "identifier": oid, "url": absu(url(lang, path)),
               "image": {"@type": "ImageObject", "contentUrl": absu(f"/img/l/{fn(o)}.webp"), "creditText": author_name(o, lang) if o["kind"] == "artwork" else L(lang, "Нона Дронова", "Nona Dronova"),
                         "creator": {"@id": SITE_URL + ("/#sergey" if o.get("author") == "sergey" else "/#nona")},
-                        "copyrightNotice": "© " + (author_name(o, lang) if o["kind"] == "artwork" else L(lang, "Нона Дронова", "Nona Dronova"))}, "isPartOf": {"@type": "Collection", "name": coll_name(cslug, lang)}, "inLanguage": lang}
+                        "copyrightNotice": "© " + (author_name(o, lang) if o["kind"] == "artwork" else L(lang, "Нона Дронова", "Nona Dronova")),
+                        "acquireLicensePage": absu(url(lang, "/contact/"))}, "isPartOf": {"@type": "Collection", "name": coll_name(cslug, lang)}, "inLanguage": lang}
     if o["kind"] == "artwork":
         who = SITE_URL + ("/#sergey" if o["author"] == "sergey" else "/#nona")
         ld_obj.update({"creator": {"@id": who}, "copyrightHolder": {"@id": who}})
@@ -934,12 +940,26 @@ def build_object(o, lang):
             ld_obj["artMedium"] = o["technique_en"]
             ld_obj["artform"] = "Painting" if "canvas" in o["technique_en"].lower() or "watercolour" in o["technique_en"].lower() else ("Jewellery" if "silver" in o["technique_en"].lower() else "Textile art")
         if o.get("title_variants_en"): ld_obj["alternateName"] = o["title_variants_en"]
-    d = (f"{ttl}. " if has_title(o) else "") + f"{author_name(o, lang)}, {coll_name(cslug, lang)}"
-    if t: d += f". {t}"
-    if o.get("year"): d += f", {o['year']}"
-    d += L(lang, f". Запись {oid} научного каталога виртуального музея.", f". Record {oid} in the virtual museum's scholarly catalogue.")
-    tshort = ttl if len(ttl) <= 48 else ttl[:46].rsplit(" ", 1)[0] + "…"
-    page(lang, path, "archive", f"{tshort} ({oid}) — " + author_name(o, lang),
+    who_gen = L(lang, "Сергея Дронова", "Sergey Dronov") if o.get("author") == "sergey" else L(lang, "Ноны Дроновой", "Nona Dronova")
+    if o["kind"] == "garden":
+        d = L(lang, f"{ttl}. Сад «Папоротники и мох» Сергея Дронова — фотография из раздела «Сад как искусство» виртуального музея Ноны Дроновой.",
+              f"{ttl}. The Ferns and Moss garden by Sergey Dronov — a photograph from The Garden as Art in the Nona Dronova Virtual Art Museum.")
+    else:
+        if cslug in ("liberi", "jewellery", "sergey-jewellery"): kind_ru, kind_en, tail_ru, tail_en = "Украшение", "Jewellery piece", "Авторское ювелирное искусство.", "Author's jewellery."
+        elif cslug == "textiles": kind_ru, kind_en, tail_ru, tail_en = "Текстильная работа", "Textile work", "Авторский интерьерный текстиль.", "Artistic interior textiles."
+        else: kind_ru, kind_en, tail_ru, tail_en = "Картина", "Painting", "Ботаническая живопись, научный каталог музея.", "Botanical painting, scholarly catalogue."
+        bits = ", ".join(x for x in [t, str(o["year"]) if o.get("year") else None] if x)
+        real = bool(o.get("title_en") or src_title(o))
+        if real:
+            head_ru, head_en = f"{kind_ru} {who_gen} «{ttl}»", f"{kind_en} by {who_gen}, “{ttl}”"
+        elif cslug in APPLIED:
+            head_ru, head_en = f"{ttl} — работа {who_gen}", f"{ttl} by {who_gen}"
+        else:
+            head_ru, head_en = f"{kind_ru} {who_gen}", f"{kind_en} by {who_gen}"
+        d = L(lang, f"{head_ru} из коллекции «{coll_name(cslug, 'ru')}»" + (f", {bits.lower()}" if bits else "") + f". {oid}. {tail_ru}",
+              f"{head_en}, from the {coll_name(cslug, 'en')} collection" + (f", {bits.lower()}" if bits else "") + f". {oid}. {tail_en}")
+    tshort = ttl if len(ttl) <= 36 else ttl[:34].rsplit(" ", 1)[0].rstrip(",;:") + "…"
+    page(lang, path, "archive", f"{tshort} — {author_name(o, lang)}, {oid}",
          d, body, crumbs=[home_crumb(lang), (L(lang, "Каталог", "Catalogue"), "/archive/"), (oid, path)], og=og_image(oid), ld=[ld_obj],
          accent=(c["accent"] if c else "#177245"), images=[oid])
 
