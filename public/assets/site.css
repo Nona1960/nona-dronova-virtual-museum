@@ -470,3 +470,19 @@ blockquote.pull{font-weight:400;color:var(--ink)}
   .big-ann{font-size:1.15rem}
 }
 .lib-group .lib-rubric{display:none}
+
+/* ---------- alignment fixes (19.10) ---------- */
+.split.eqbtn{align-items:stretch}
+.split.eqbtn>div{display:flex;flex-direction:column}
+.split.eqbtn>div>.btns{margin-top:auto;padding-top:1rem;margin-bottom:0}
+.cards{align-items:stretch}
+.ccard{height:100%}
+.cbody{flex:1 1 auto}
+.cbody i{margin-top:auto;padding-top:.6rem;align-self:flex-start;text-transform:none;letter-spacing:.04em;font-style:normal;font-size:1.05rem;color:var(--bronze);border-bottom:1px solid var(--bronze-soft)}
+.ccard:hover .cbody i{color:var(--ink);border-color:var(--ink)}
+.go{display:flex;flex-wrap:wrap;gap:.5rem 1.8rem;margin:.9rem 0 .4rem;font-size:1.1rem}
+.go a{text-decoration:none;border-bottom:1px solid var(--bronze-soft)}
+.go a:hover{border-color:var(--ink)}
+.bio-strip .thumb{transition:opacity .2s}.bio-strip .thumb:hover{opacity:.85}
+@media (max-width:1240px){.nav{display:none}.menu{display:block}.lang{margin-left:auto}}
+@media (max-width:640px){.cbody i{font-size:.95rem}.go{font-size:1.02rem;gap:.4rem 1.2rem}}

@@ -368,8 +368,8 @@ def build_home(lang):
     <div class="cards two">{mat}</div>
   </div>
 </section>
-<section class="wrap split">
-  <div><p class="eyebrow">{L(lang, 'Образование', 'Education')}</p><p>{e(H['edu_' + lang])}</p>{btn(lang, '/education/', 'Педагогическая лаборатория', 'Teaching laboratory', 'btn ghost')}</div>
+<section class="wrap split eqbtn">
+  <div><p class="eyebrow">{L(lang, 'Образование', 'Education')}</p><p>{e(H['edu_' + lang])}</p><div class="btns">{btn(lang, '/education/', 'Педагогическая лаборатория', 'Teaching laboratory', 'btn ghost')}</div></div>
   <div class="closing"><p class="big">{e(H['close_' + lang])}</p><div class="btns">{btn(lang, '/collections/', 'Смотреть коллекции', 'View the collections')}{btn(lang, '/archive/', 'Научный каталог', 'Scholarly catalogue', 'btn ghost')}</div></div>
 </section>'''
     desc = L(lang, "Живопись, сад, текстиль и серебро Ноны Дроновой: коллекции, теория ботанического экспрессионизма, сад «Папоротники и мох» и научный каталог произведений.",
@@ -382,7 +382,7 @@ def coll_card(c, lang, path=None):
     th = img(o, lang, sizes="(max-width:640px) 45vw, 300px") if o else ""
     return (f'<a class="ccard" href="{url(lang, path or "/collections/" + c["slug"] + "/")}" style="--accent:{c["accent"]}">'
             f'<span class="thumb">{th}</span><span class="cbody"><b>{e(L(lang, c["ru"], c["en"]))}</b>'
-            f'<span>{e(L(lang, c["lead_ru"], c["lead_en"]))}</span><i>{n} {L(lang, plural_ru(n), "works" if n != 1 else "work")}</i></span></a>')
+            f'<span>{e(L(lang, c["lead_ru"], c["lead_en"]))}</span><i>{L(lang, "Смотреть", "View")} {n} {L(lang, plural_ru(n), "works" if n != 1 else "work")} →</i></span></a>')
 
 def plural_ru(n):
     n10, n100 = n % 10, n % 100
@@ -700,6 +700,22 @@ def md(t):
     t = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", t)
     return re.sub(r"\*(.+?)\*", r"<em>\1</em>", t)
 
+ABOUT_LINKS = {  # section id -> [(path, ru, en)]
+  "identity": [("/collections/", "Коллекции", "Collections"), ("/theory/botanical-expressionism/", "Ботанический экспрессионизм", "Botanical Expressionism")],
+  "development": [("/collections/early-works/", "Ранние работы", "Early Works"), ("/collections/spring/", "Весна", "Spring"), ("/collections/hydrangeas/", "Гортензии", "Hydrangeas"), ("/collections/peonies/", "Пионы", "Peonies")],
+  "colour": [("/theory/colour-contrast/", "Цвет как структурная сила", "Colour as a Structural Force"), ("/collections/contrasts/", "Живописный контраст", "Pictorial Contrast"), ("/collections/floral-energy/", "Цветочная энергия", "Floral Energy")],
+  "garden": [("/garden-as-art/", "Сад как искусство", "The Garden as Art"), ("/theory/garden-to-painting/", "От сада к картине", "From Garden to Painting")],
+  "textiles": [("/artistic-interior-textiles/", "Художественный текстиль", "Artistic Interior Textiles")],
+  "liberi": [("/liberi/", "Коллекция LIBERI", "The LIBERI collection")],
+  "interdisciplinary": [("/collections/interior-panels/", "Большие интерьерные панно", "Large Interior Panels"), ("/theory/painting-and-space/", "Живопись и пространство", "Painting and Space")],
+  "museum": [("/collections/", "Коллекции", "Collections"), ("/archive/", "Научный каталог", "Scholarly catalogue"), ("/exhibitions/", "Виртуальные выставки", "Virtual exhibitions")],
+  "legacy": [("/garden-as-art/", "Сад как искусство", "The Garden as Art"), ("/artistic-interior-textiles/", "Текстиль", "Textiles"), ("/liberi/", "LIBERI", "LIBERI")],
+}
+def about_links(sid, lang):
+    ls = ABOUT_LINKS.get(sid)
+    if not ls: return ""
+    return '<p class="go">' + "".join(f'<a href="{url(lang, p_)}">{e(L(lang, r, en_))} →</a>' for p_, r, en_ in ls) + "</p>"
+
 def about_strip(spec, lang):
     if spec == "garden":
         ids = ["NDG-0001", "NDX-0010", "NDX-0039", "NDG-0003"]
@@ -734,6 +750,7 @@ def build_about(lang):
         if sid == "education":
             body_ += f'<p>{btn(lang, "/education/", "Педагогическая лаборатория", "Teaching laboratory", "btn ghost")}</p>'
         if ill: body_ += about_strip(ill, lang)
+        body_ += about_links(sid, lang)
         secs += f'<section class="bio-sec" id="{sid}"><h2>{e(L(lang, hru, hen))}</h2>{body_}</section>'
     facts = "".join(f'<li>{e(L(lang, ru, en))} {badge(st, lang)}</li>' for ru, en, st in A["facts"])
     arch = "".join(f'<li><a href="{u}" rel="noopener">{e(n)}</a></li>' for n, u in P.ARCHIVES)

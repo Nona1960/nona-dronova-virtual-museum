@@ -15,7 +15,7 @@ NAV = [  # key, ru, en, path
   ("textiles", "Текстиль", "Textiles", "/artistic-interior-textiles/"),
   ("liberi", "LIBERI", "LIBERI", "/liberi/"),
   ("archive", "Каталог", "Catalogue", "/archive/"),
-  ("about", "Об авторе", "About", "/about/"),
+  ("about", "О художнике", "About the Artist", "/about/"),
 ]
 FOOT = [
   ("education", "Педагогика", "Education", "/education/"),
