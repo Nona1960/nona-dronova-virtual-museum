@@ -182,6 +182,16 @@ a.work:hover img{opacity:.88}
 .glossary div{padding:16px 0;border-bottom:1px solid var(--hairline)}
 .glossary dt{font:600 23px/1.2 var(--serif)}.glossary dd{margin:6px 0 0}
 
+/* biography */
+.bio{display:grid;grid-template-columns:260px minmax(0,1fr);gap:clamp(24px,5vw,64px);align-items:start;padding-top:10px;padding-bottom:40px}
+.bio-toc{position:sticky;top:84px;font-size:14px}
+.bio-toc ol{margin:0;padding-left:20px;color:var(--stone)}.bio-toc li{margin:7px 0}
+.bio-toc a{color:var(--graphite);text-decoration:none}.bio-toc a:hover{color:var(--accent)}
+.bio-text{max-width:780px}
+.bio-sec{padding:6px 0 26px;border-bottom:1px solid var(--hairline);scroll-margin-top:80px}
+.bio-sec>p{font-size:18px;line-height:1.75}
+.bio-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0 6px}
+.closing-quote{font-size:clamp(24px,2.8vw,32px);margin:40px 0}
 /* badges */
 .badge{display:inline-block;font:600 10.5px/1.5 var(--sans);letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border:1px solid currentColor;border-radius:var(--r);white-space:nowrap;vertical-align:middle}
 .b-author{color:#7A4E1E}.b-museum{color:#3F5F8A}.b-confirmed{color:var(--green)}.b-stated{color:#9A6A00}
@@ -237,7 +247,8 @@ body.textile .work img{background:#EFE6DA}
 
 /* ---------- tablet ---------- */
 @media (max-width:900px){
-  .split,.grid2,.object,.foot{grid-template-columns:1fr}
+  .split,.grid2,.object,.foot,.bio{grid-template-columns:1fr}
+  .bio-toc{position:static;background:var(--paper);border:1px solid var(--hairline);padding:14px 16px}
   .split.rev>:first-child{order:0}
   .object-art{position:static}
   .seasons{grid-template-columns:repeat(2,1fr)}
@@ -274,7 +285,8 @@ body.textile .work img{background:#EFE6DA}
   .essay-card{grid-template-columns:44px 1fr;gap:10px;padding:14px}
   .essay-card .badge{grid-column:2;justify-self:start}
   .essay-card .n{font-size:26px}.essay-card b{font-size:20px}
-  .essay>p{font-size:16.5px}
+  .essay>p,.bio-sec>p{font-size:16.5px}
+  .bio-strip{gap:6px}
   .modules{grid-template-columns:1fr}
   .strip{grid-template-columns:repeat(4,1fr);gap:6px}
   .filters{position:static;padding:12px;gap:10px}

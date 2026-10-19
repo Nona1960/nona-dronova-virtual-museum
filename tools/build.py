@@ -632,26 +632,74 @@ def build_liberi(lang):
          body, crumbs=[home_crumb(lang), ("LIBERI", path)], og=og_image(rings[0]["id"]), accent=COLL["liberi"]["accent"],
          images=[o["id"] for o in ws + serg], bodycls="liberi")
 
+import content_about as AB
+def md(t):
+    t = e(t)
+    t = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", t)
+    return re.sub(r"\*(.+?)\*", r"<em>\1</em>", t)
+
+def about_strip(spec, lang):
+    if spec == "garden":
+        ids = ["NDG-0001", "NDX-0010", "NDX-0039", "NDG-0003"]
+        return '<div class="bio-strip">' + "".join(f'<a href="{url(lang, "/garden-as-art/")}" class="thumb">{img(BY_ID[i], lang, sizes="200px")}</a>' for i in ids) + "</div>"
+    if spec == "interiors":
+        ids = ["NDX-0022", "NDI-0005", "NDI-0008", "NDI-0012"]
+        return '<div class="bio-strip">' + "".join(f'<a href="{url(lang, "/collections/interior-panels/")}#home" class="thumb">{img(BY_ID[i], lang, sizes="200px")}</a>' for i in ids) + "</div>"
+    cells = ""
+    n_each = 4 // len(spec) if len(spec) < 4 else 1
+    for c in spec:
+        ws = [o for o in coll_works(c) if o.get("title_en")] or coll_works(c)
+        for o in ws[:max(1, n_each)]:
+            href = url(lang, COLL[c].get("page") or "/collections/" + c + "/")
+            cells += f'<a href="{href}" class="thumb" title="{e(L(lang, COLL[c]["ru"], COLL[c]["en"]))}">{img(o, lang, sizes="200px")}</a>'
+    return f'<div class="bio-strip">{cells}</div>'
+
 def build_about(lang):
     A = P.ABOUT; path = "/about/"
+    toc = "".join(f'<li><a href="#{sid}">{e(L(lang, hru, hen))}</a></li>' for sid, hru, hen, *_ in AB.SECTIONS)
+    secs = ""
+    for sid, hru, hen, pru, pen, ill in AB.SECTIONS:
+        body_ = "".join(f"<p>{md(x)}</p>" for x in (pru if lang == "ru" else pen))
+        if sid == "botanical-expressionism":
+            body_ += '<ol class="principle-cards">' + "".join(
+                f'<li><b>{L(lang, "Принцип", "Principle")} {i+1}</b><h3>{e(L(lang, a, b))}</h3><p>{e(L(lang, c, d))}</p></li>' for i, (a, b, c, d) in enumerate(AB.PRINCIPLES)) + "</ol>"
+            body_ += f'<aside class="note-box">{e(L(lang, AB.BE_NOTE_RU, AB.BE_NOTE_EN))}</aside>'
+            body_ += f'<p>{btn(lang, "/theory/botanical-expressionism/", "Подробнее о концепции", "More on the concept", "btn ghost")}</p>'
+        if sid == "research":
+            body_ += '<ul class="facts-list">' + "".join(f"<li><em>{e(L(lang, a, b))}</em></li>" for a, b in AB.THEMES) + "</ul>"
+            body_ += f'<aside class="note-box">{e(L(lang, AB.THEMES_NOTE_RU, AB.THEMES_NOTE_EN))}</aside>'
+            body_ += f'<p>{btn(lang, "/theory/", "Теория современной живописи", "The Theory of Contemporary Painting", "btn ghost")}</p>'
+        if sid == "education":
+            body_ += f'<p>{btn(lang, "/education/", "Педагогическая лаборатория", "Teaching laboratory", "btn ghost")}</p>'
+        if ill: body_ += about_strip(ill, lang)
+        secs += f'<section class="bio-sec" id="{sid}"><h2>{e(L(lang, hru, hen))}</h2>{body_}</section>'
     facts = "".join(f'<li>{e(L(lang, ru, en))} {badge(st, lang)}</li>' for ru, en, st in A["facts"])
     arch = "".join(f'<li><a href="{u}" rel="noopener">{e(n)}</a></li>' for n, u in P.ARCHIVES)
+    foot = AB.FOOT_RU if lang == "ru" else AB.FOOT_EN
     body = f'''<section class="wrap split about">
-  <div><p class="eyebrow">{L(lang, "Об авторе", "About the artist")}</p><h1>{e(A["h1_" + lang])}</h1>{paras(A["text_" + lang])}</div>
+  <div><p class="eyebrow">{e(L(lang, AB.KICKER_RU, AB.KICKER_EN))}</p><h1>{e(L(lang, AB.TITLE_RU, AB.TITLE_EN))}</h1>
+  <p class="lead">{e(L(lang, AB.SUB_RU, AB.SUB_EN))}</p>
+  <p class="small">{badge("museum", lang)} {L(lang, "Кураторский и исследовательский профиль. Перевод на русский — музея; оригинал — английская версия.", "Curatorial and research profile.")}</p></div>
   <figure class="portrait">{img(BY_ID[PORTRAIT_ID], lang, sizes="(max-width:900px) 80vw, 420px", large=True, eager=True)}<figcaption>{L(lang, "Нона Дронова", "Nona Dronova")}</figcaption></figure>
 </section>
-<section class="wrap grid2">
-  <div><h2>{L(lang, "Практики и материалы", "Practices and materials")}</h2><ul class="facts-list">{facts}</ul></div>
-  <div><h2>{L(lang, "Творческий путь", "Creative path")}</h2><p>{L(lang, "Хронология будет опубликована после проверки автором.", "A chronology will be published once verified by the artist.")}</p>
-  <h2>{L(lang, "Выставки и публикации", "Exhibitions and publications")}</h2><p>{L(lang, "Только подтверждённые записи — раздел в подготовке.", "Verified records only — in preparation.")}</p>
-  <h2>{L(lang, "Авторская позиция", "The artist's position")}</h2><blockquote class="pull">{e(L(lang, "Для меня цвет становится формой энергии.", "For me, colour becomes a form of energy."))}<cite>{L(lang, "Нона Дронова. «Лилии и лилейники»", "Nona Dronova, Lilies and Daylilies")}</cite></blockquote></div>
-</section>
-<section class="band"><div class="wrap split"><div><h2>{L(lang, "Мастерская", "The studio")}</h2><p>{L(lang, "Работы в мастерской художника.", "Works in the artist's studio.")}</p></div>{photo(BY_ID[STUDIO_ID], lang)}</div></section>
-<section class="wrap"><h2>{L(lang, "Цифровые архивы автора", "The artist's digital archives")}</h2><p>{L(lang, "Первоисточники, из которых собран музей:", "The primary sources from which the museum is assembled:")}</p><ul class="cols">{arch}</ul></section>'''
-    ld = [dict(PERSON, image=absu(f"/img/l/{PORTRAIT_ID.lower()}.webp"))]
-    page(lang, path, "about", L(lang, "Нона Дронова — художник и исследователь", "Nona Dronova — Artist and Researcher"),
-         L(lang, "Нона Дронова — художник, член Союза художников России с 2002 года: живопись, художественный текстиль, ювелирное искусство и сад как эстетическая среда.",
-           "Nona Dronova — artist, member of the Union of Artists of Russia since 2002: painting, artistic textiles, jewellery and the garden as an aesthetic environment."),
+<div class="wrap bio">
+  <nav class="bio-toc" aria-label="{L(lang, "Содержание", "Contents")}"><p class="eyebrow">{L(lang, "Содержание", "Contents")}</p><ol>{toc}</ol></nav>
+  <article class="bio-text">{secs}
+    <blockquote class="pull closing-quote">{e(L(lang, AB.CLOSING_RU, AB.CLOSING_EN))}</blockquote>
+    <footer class="cite"><p><em>{e(foot[0])}</em></p><p><em>{e(foot[1])}</em></p></footer>
+  </article>
+</div>
+<section class="band"><div class="wrap grid2">
+  <div><h2>{L(lang, "Подтверждённые сведения", "Verified information")}</h2><ul class="facts-list">{facts}</ul></div>
+  <div><h2>{L(lang, "Мастерская", "The studio")}</h2>{photo(BY_ID[STUDIO_ID], lang)}</div>
+</div></section>
+<section class="wrap"><h2>{L(lang, "Цифровые архивы автора", "The artist\'s digital archives")}</h2><p>{L(lang, "Первоисточники, из которых собран музей:", "The primary sources from which the museum is assembled:")}</p><ul class="cols">{arch}</ul></section>'''
+    ld = [dict(PERSON, image=absu(f"/img/l/{PORTRAIT_ID.lower()}.webp"), description=L(lang, AB.SUB_RU, AB.SUB_EN),
+               knowsAbout=["Botanical painting", "Botanical Expressionism", "Textile art", "Silver jewellery", "Art education"]),
+          {"@type": "ProfilePage", "url": absu(url(lang, path)), "mainEntity": {"@id": SITE_URL + "/#nona"}, "inLanguage": lang, "dateModified": TODAY}]
+    page(lang, path, "about", L(lang, "Нона Дронова — художник, исследователь ботанического экспрессионизма", "Nona Dronova — Artist and Researcher of Botanical Expressionism"),
+         L(lang, "Искусствоведческая биография Ноны Дроновой: ботанический экспрессионизм, цветовой язык, сад как искусство, интерьерный текстиль, LIBERI и художественное образование.",
+           "An art-historical biography of Nona Dronova: botanical expressionism, colour language, the garden as art, interior textiles, LIBERI and art education."),
          body, crumbs=[home_crumb(lang), (L(lang, "Об авторе", "About"), path)], og=og_image(PORTRAIT_ID), ld=ld)
 
 def build_simple(lang):
