@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+User-agent: Yandex
+Allow: /
+Clean-param: q&c
+
+Sitemap: https://nona-dronova-museum.vercel.app/sitemap.xml
