@@ -226,6 +226,10 @@ def head(lang, path, ttl, desc, og=None, ld=None, extra=""):
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap">
 <link rel="stylesheet" href="/assets/site.css?v={CSS_V}">
 {extra}<script type="application/ld+json">{ldj}</script>
+<script>
+  window.va = window.va || function () {{ (window.vaq = window.vaq || []).push(arguments); }};
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>'''
 
 def header(lang, path, active):
