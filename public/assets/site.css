@@ -486,3 +486,10 @@ blockquote.pull{font-weight:400;color:var(--ink)}
 .bio-strip .thumb{transition:opacity .2s}.bio-strip .thumb:hover{opacity:.85}
 @media (max-width:1240px){.nav{display:none}.menu{display:block}.lang{margin-left:auto}}
 @media (max-width:640px){.cbody i{font-size:.95rem}.go{font-size:1.02rem;gap:.4rem 1.2rem}}
+
+/* language switch RU · EN */
+.lang{display:flex;align-items:center;gap:.35rem;border:0;padding:0;font:400 1rem/1 var(--serif);letter-spacing:.14em;color:var(--graphite)}
+.lang a{color:var(--graphite);text-decoration:none;padding:6px 2px;border-bottom:1px solid transparent}
+.lang a:hover{color:var(--ink);border-bottom-color:var(--bronze-soft)}
+.lang .cur{color:var(--bronze);padding:6px 2px;border-bottom:1px solid var(--bronze)}
+.lang i{font-style:normal;color:var(--hairline)}

@@ -200,6 +200,7 @@ def head(lang, path, ttl, desc, og=None, ld=None, extra=""):
 <link rel="alternate" hreflang="en" href="{en}">
 <link rel="alternate" hreflang="x-default" href="{ru}">
 <meta name="robots" content="index, follow, max-image-preview:large">
+<meta http-equiv="content-language" content="{lang}">
 <meta name="author" content="{L(lang, 'Нона Дронова', 'Nona Dronova')}">
 <meta name="theme-color" content="#f8f6f1">
 <meta property="og:type" content="{'article' if path.startswith('/theory/') else 'website'}">
@@ -226,15 +227,17 @@ def header(lang, path, active):
     other = "en" if lang == "ru" else "ru"
     nav = "".join(f'<a href="{url(lang, p)}"{" aria-current=\"page\"" if k == active else ""}>{e(ru if lang == "ru" else en)}</a>'
                   for k, ru, en, p in P.NAV)
-    sw = f'<a class="lang" href="{url(other, path)}" hreflang="{other}" lang="{other}">{"EN" if lang == "ru" else "RU"}</a>'
+    cur = f'<span class="cur" aria-current="true">{lang.upper()}</span>'
+    alt_ = f'<a href="{url(other, path)}" hreflang="{other}" lang="{other}" title="{"English version" if lang == "ru" else "Русская версия"}">{other.upper()}</a>'
+    sw = f'<div class="lang notranslate" translate="no" role="group" aria-label="{L(lang, "Язык", "Language")}">' + (cur + '<i>·</i>' + alt_ if lang == "ru" else alt_ + '<i>·</i>' + cur) + '</div>'
     return f'''<body>
 <a class="skip" href="#main">{L(lang, "К содержанию", "Skip to content")}</a>
 <header class="site-header">
   <div class="bar">
-    <a class="brand" href="{url(lang, '/')}"><img src="/assets/sun.webp" width="40" height="40" alt=""><span><b>{L(lang, 'Нона Дронова', 'Nona Dronova')}</b><i>{L(lang, 'Виртуальный музей', 'Virtual Art Museum')}</i></span></a>
-    <nav class="nav" aria-label="{L(lang, 'Основное меню', 'Main menu')}">{nav}</nav>
+    <a class="brand notranslate" translate="no" href="{url(lang, '/')}"><img src="/assets/sun.webp" width="40" height="40" alt=""><span><b>{L(lang, 'Нона Дронова', 'Nona Dronova')}</b><i>{L(lang, 'Виртуальный музей', 'Virtual Art Museum')}</i></span></a>
+    <nav class="nav notranslate" translate="no" aria-label="{L(lang, 'Основное меню', 'Main menu')}">{nav}</nav>
     {sw}
-    <details class="menu"><summary aria-label="{L(lang, 'Меню', 'Menu')}"><span></span><span></span><span></span></summary>
+    <details class="menu notranslate" translate="no"><summary aria-label="{L(lang, 'Меню', 'Menu')}"><span></span><span></span><span></span></summary>
       <nav aria-label="{L(lang, 'Мобильное меню', 'Mobile menu')}">{nav}{''.join(f'<a href="{url(lang, p)}">{e(ru if lang == "ru" else en)}</a>' for k, ru, en, p in P.FOOT)}</nav></details>
   </div>
 </header>
