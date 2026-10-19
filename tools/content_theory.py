@@ -261,3 +261,48 @@ GLOSSARY = [
   ("Ботанический экспрессионизм", "Botanical expressionism", "Предлагаемое авторское понятие: растительные формы как основа выразительного цветового, ритмического и композиционного высказывания. Не является общепризнанным направлением.", "A proposed authorial term: plant forms as the basis of an expressive statement in colour, rhythm and composition. Not an established art movement."),
   ("Интерьерное арт-панно", "Interior art panel", "Работа, задуманная как самостоятельное художественное присутствие в архитектурном пространстве.", "A work conceived as an autonomous artistic presence within architectural space."),
 ]
+
+# ---------------------------------------------------------------- library (19.10.2026)
+LIB_TITLE_RU = "Художественная теория и исследования"
+LIB_TITLE_EN = "Artistic Theory & Research"
+LIB_SUB_RU = "Авторские эссе, исследования живописного языка и материалы по теории ботанического экспрессионизма"
+LIB_SUB_EN = "The artist's essays, studies of painterly language and materials on the theory of Botanical Expressionism"
+LIB_GROUPS = [  # (roman, ru, en, [slugs])
+  ("I", "Теория ботанического экспрессионизма", "The Theory of Botanical Expressionism", ["botanical-expressionism", "context"]),
+  ("II", "Цвет и живописная материя", "Colour and Painterly Matter", ["colour-contrast", "brushstroke", "impasto-bloom", "colour-system"]),
+  ("III", "Ботаническая форма и художественный образ", "Botanical Form and the Artistic Image", ["recognition-and-freedom", "single-flower"]),
+  ("IV", "Сад, живопись и пространство", "Garden, Painting and Space", ["garden-to-painting", "painting-and-space"]),
+]
+# slug -> (type_ru, type_en, read: essay|study, annotation_ru, annotation_en) — annotations summarise the actual texts
+LIB_META = {
+ "botanical-expressionism": ("Концептуальный очерк", "Conceptual essay", "study",
+   "Определение авторского понятия «ботанический экспрессионизм» и шесть его принципов — от наблюдения до междисциплинарности. Концепция представлена как исследовательская рамка, требующая сравнительного анализа.",
+   "A definition of the authorial term ‘botanical expressionism’ and its six principles, from observation to interdisciplinarity. The concept is presented as a research framework that calls for comparative analysis."),
+ "context": ("Обзорная статья", "Survey article", "study",
+   "Традиции, с которыми следует сопоставлять ботанический экспрессионизм: ботаническая иллюстрация, цветочная живопись и сад художника, фовизм и экспрессионизм. Без утверждений о влияниях и первенстве.",
+   "The traditions with which botanical expressionism should be compared: botanical illustration, flower painting and the artist's garden, Fauvism and Expressionism. No claims of influence or priority are made."),
+ "colour-contrast": ("Теоретическое эссе", "Theoretical essay", "essay",
+   "Цвет как сила, строящая картину: доминирующий контраст, иерархия цвета и «путешествие» цвета по холсту. Картина понимается как система взаимодействующих цветовых энергий.",
+   "Colour as the force that builds a painting: the dominant contrast, the hierarchy of colour and colour ‘travelling’ across the canvas. The painting is seen as a system of interacting colour energies."),
+ "brushstroke": ("Эссе о живописной технике", "Essay on technique", "essay",
+   "Почему контрастный мазок не следует смягчать и как свобода жеста подчиняется структуре картины. Видимый процесс работы становится частью смысла.",
+   "Why the contrasting stroke should not be softened, and how the freedom of the gesture is governed by the structure of the painting. The visible process becomes part of the meaning."),
+ "impasto-bloom": ("Эссе о методе", "Essay on method", "essay",
+   "Метод послойной пастозной живописи: мазок как самостоятельный структурный элемент, работа по частично высохшему слою, отношение цветка и фона.",
+   "The method of layered impasto painting: the stroke as an independent structural element, painting into a partly dried layer, and the relation of flower and background."),
+ "colour-system": ("Исследование цвета", "Colour study", "study",
+   "Почему белые, синие и красные гортензии требуют разных цветовых принципов, и как рефлексы превращают соцветие в объёмную, светоносную форму. Свобода мазка и дисциплина цвета.",
+   "Why white, blue and red hydrangeas call for different colour principles, and how reflected colour turns the flower head into a luminous, spatial form. Freedom in the stroke, discipline in colour."),
+ "recognition-and-freedom": ("Авторское эссе", "Artist's essay", "essay",
+   "Баланс узнавания и преображения в живописи листа: форма остаётся узнаваемой, а цвет освобождается от оптического факта зелёного.",
+   "The balance of recognition and transformation in painting the leaf: the form remains recognisable while colour is freed from the optical fact of green."),
+ "single-flower": ("Авторское эссе", "Artist's essay", "essay",
+   "Лилии и лилейники как носители энергии и эмоциональных состояний. Мазок как продолжение жеста цветка; решения, найденные интуитивно и осознанные позже.",
+   "Lilies and daylilies as carriers of energy and emotional states. The brushstroke as an extension of the flower's gesture; decisions found intuitively and understood later."),
+ "garden-to-painting": ("Эссе", "Essay", "essay",
+   "Живопись с натуры как передача настроения сезона, воздуха и света, а не опись растений. Принципы сада «Папоротники и мох» сопоставлены с принципами картин.",
+   "Painting from life as conveying the mood of the season, air and light rather than an inventory of plants. The principles of the Ferns and Moss garden are set beside those of the paintings."),
+ "painting-and-space": ("Эссе", "Essay", "essay",
+   "Диптихи, триптихи и интерьерные панно как способ превратить комнату в единое живописное пространство, по которому взгляд движется, как по саду.",
+   "Diptychs, triptychs and interior panels as a way of turning a room into a single pictorial space through which the eye moves as through a garden."),
+}

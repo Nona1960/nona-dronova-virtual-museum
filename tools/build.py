@@ -8,6 +8,7 @@ HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(HERE);
 sys.path.insert(0, HERE)
 from content_collections import COLLECTIONS, ROOMS, SEASONS, GH
 from content_theory import ESSAYS, CONTEXT, GLOSSARY, THEORY_INTRO_RU, THEORY_INTRO_EN
+import content_theory as TH
 import content_pages as P
 import content_publications as PUB_
 from naming import fname as _fname
@@ -584,39 +585,66 @@ def render_blocks(blocks, lang):
         elif t == "interiors": out += interiors_section(lang, h=False)
     return out
 
+LIB_ALL = {x["slug"]: x for x in ESSAYS + [CONTEXT]}
+LIB_SEQ = [sl for g in TH.LIB_GROUPS for sl in g[3]]
+def lib_group(slug): return next(g for g in TH.LIB_GROUPS if slug in g[3])
+def lib_author(x, lang):
+    return L(lang, "Нона Дронова", "Nona Dronova") if x["status"] == "author" else L(lang, "Виртуальный музей Ноны Дроновой", "Nona Dronova Virtual Art Museum")
+def lib_read(slug, lang):
+    return L(lang, "Читать исследование", "Read the study") if TH.LIB_META[slug][2] == "study" else L(lang, "Читать эссе", "Read the essay")
+def lib_entry(slug, lang, tag="li"):
+    x = LIB_ALL[slug]; m = TH.LIB_META[slug]; g = lib_group(slug); href = url(lang, f"/theory/{slug}/")
+    return (f'<{tag} class="lib-entry"><p class="lib-rubric">{g[0]}. {e(L(lang, g[1], g[2]))}</p>'
+            f'<h3><a href="{href}">{e(L(lang, x["ru"], x["en"]))}</a></h3>'
+            f'<p class="lib-ann">{e(L(lang, m[3], m[4]))}</p>'
+            f'<p class="lib-meta">{e(lib_author(x, lang))} · {e(L(lang, m[0], m[1]))}</p>'
+            f'<a class="lib-read" href="{href}">{lib_read(slug, lang)} →</a></{tag}>')
+
+def library_html(lang, compact=False):
+    out = ""
+    for roman, ru, en, slugs in TH.LIB_GROUPS:
+        out += (f'<section class="lib-group" aria-labelledby="g-{roman}"><h2 id="g-{roman}"><span class="roman">{roman}</span>{e(L(lang, ru, en))}</h2>'
+                f'<ol class="lib-list">{"".join(lib_entry(sl, lang) for sl in slugs)}</ol></section>')
+    return out
+
 def build_theory(lang):
     path = "/theory/"
-    items = "".join(f'''<li><a class="essay-card" href="{url(lang, "/theory/" + x["slug"] + "/")}"><span class="n">{x["n"]}</span>
-      <span><b>{e(L(lang, x["ru"], x["en"]))}</b><i>{e(L(lang, x["sub_ru"], x["sub_en"]))}</i></span>{badge(x["status"], lang)}</a></li>''' for x in ESSAYS)
-    items += f'''<li><a class="essay-card" href="{url(lang, "/theory/context/")}"><span class="n">10</span><span><b>{e(L(lang, CONTEXT["ru"], CONTEXT["en"]))}</b><i>{e(L(lang, CONTEXT["sub_ru"], CONTEXT["sub_en"]))}</i></span>{badge("museum", lang)}</a></li>'''
-    body = f'''<section class="wrap intro"><p class="eyebrow">Theory of Contemporary Painting</p><h1>{L(lang, "Теория современной живописи", "The Theory of Contemporary Painting")}</h1>
-<p class="lead">{e(L(lang, THEORY_INTRO_RU, THEORY_INTRO_EN))}</p></section>
-<section class="wrap"><ol class="essays">{items}</ol>
-<div class="btns">{btn(lang, "/theory/glossary/", "Глоссарий терминов", "Glossary of terms", "btn ghost")}{btn(lang, "/research/#zenodo", "Публикации на Zenodo", "Publications on Zenodo", "btn ghost")}</div></section>'''
-    page(lang, path, "theory", L(lang, "Теория современной живописи", "The Theory of Contemporary Painting"),
-         L(lang, "Тексты Ноны Дроновой о цвете, контрасте, мазке и пастозной живописи — курс теории современной ботанической живописи с произведениями и вопросами для наблюдения.",
-           "Nona Dronova's texts on colour, contrast, brushwork and impasto — a course in the theory of contemporary botanical painting with works and questions for looking."),
-         body, crumbs=[home_crumb(lang), (L(lang, "Теория", "Theory"), path)], og=og_image(cover("contrasts")["id"]))
-    seq = ESSAYS + [CONTEXT]
-    for i, x in enumerate(seq):
-        p = f"/theory/{x['slug']}/"
-        prv, nxt = (seq[i - 1] if i else None), (seq[i + 1] if i + 1 < len(seq) else None)
-        src = "".join(f'<a href="{GH}{s}" rel="noopener">{s}</a> ' for s in x.get("src", []))
-        trans = (L(lang, "Перевод музея с английского; оригинал — в английской версии страницы.", "Original English text by the artist.") if x["status"] == "author" else "")
+    title = L(lang, TH.LIB_TITLE_RU, TH.LIB_TITLE_EN)
+    body = f'''<section class="wrap lib-head"><p class="eyebrow">{L(lang, "Библиотека музея", "The museum library")}</p><h1>{e(title)}</h1>
+<p class="lead">{e(L(lang, TH.LIB_SUB_RU, TH.LIB_SUB_EN))}</p><p class="lib-intro">{e(L(lang, THEORY_INTRO_RU, THEORY_INTRO_EN))}</p></section>
+<div class="wrap lib">{library_html(lang)}
+<nav class="lib-more" aria-label="{L(lang, "Ещё", "More")}"><a href="{url(lang, "/theory/glossary/")}">{L(lang, "Глоссарий терминов", "Glossary of terms")} →</a><a href="{url(lang, "/research/")}#zenodo">{L(lang, "Публикации на Zenodo", "Publications on Zenodo")} →</a></nav></div>'''
+    ld = [{"@type": "CollectionPage", "name": title, "url": absu(url(lang, path)), "inLanguage": lang, "isPartOf": {"@id": SITE_URL + "/#site"},
+           "mainEntity": {"@type": "ItemList", "itemListElement": [{"@type": "ListItem", "position": i + 1, "url": absu(url(lang, f"/theory/{sl}/")),
+               "name": L(lang, LIB_ALL[sl]["ru"], LIB_ALL[sl]["en"])} for i, sl in enumerate(LIB_SEQ)]}}]
+    page(lang, path, "theory", title + L(lang, " — Нона Дронова", " — Nona Dronova"),
+         L(lang, "Библиотека художественной теории Ноны Дроновой: ботанический экспрессионизм, цвет и живописная материя, ботаническая форма, сад и пространство. Эссе и исследования.",
+           "Nona Dronova's library of artistic theory: Botanical Expressionism, colour and painterly matter, botanical form, garden and space. Essays and studies."),
+         body, crumbs=[home_crumb(lang), (title, path)], og=og_image(cover("contrasts")["id"]), ld=ld)
+    for i, slug in enumerate(LIB_SEQ):
+        x = LIB_ALL[slug]; m = TH.LIB_META[slug]; g = lib_group(slug)
+        p = f"/theory/{slug}/"
+        src = ", ".join(f'<a href="{GH}{s}" rel="noopener">{s}</a>' for s in x.get("src", []))
         sub = x.get("sub_ru") if lang == "ru" else x.get("sub_en")
-        pager = '<nav class="pager">' + (f'<a href="{url(lang, "/theory/" + prv["slug"] + "/")}">← {e(L(lang, prv["ru"], prv["en"]))}</a>' if prv else "<span></span>") + \
-                (f'<a href="{url(lang, "/theory/" + nxt["slug"] + "/")}">{e(L(lang, nxt["ru"], nxt["en"]))} →</a>' if nxt else f'<a href="{url(lang, "/theory/glossary/")}">{L(lang, "Глоссарий", "Glossary")} →</a>') + "</nav>"
-        body = f'''<article class="wrap essay"><header><p class="eyebrow">{L(lang, "Теория", "Theory")} · {x.get("n", "10")}</p><h1>{e(L(lang, x["ru"], x["en"]))}</h1>
-<p class="sub">{e(sub)}</p><p class="meta">{badge(x["status"], lang)} {L(lang, "Автор текста: Нона Дронова", "Text by Nona Dronova") if x["status"] == "author" else L(lang, "Текст подготовлен музеем", "Text prepared by the museum")}{(" · " + trans) if trans else ""}{(" · " + L(lang, "Источник", "Source") + ": " + src) if src else ""}</p></header>
-{render_blocks(x["blocks"], lang)}
-<footer class="cite"><h3>{L(lang, "Как цитировать", "How to cite")}</h3><p>{cite(lang, x, p)}</p></footer>
-{pager}</article>'''
-        first_desc = next((L(lang, b[1], b[2]) for b in x["blocks"] if b[0] in ("lead", "p")), "")
-        ld = [{"@type": "Article", "headline": L(lang, x["ru"], x["en"]), "inLanguage": lang, "url": absu(url(lang, p)),
+        biblio = []
+        if src: biblio.append(L(lang, "Первоисточник: цифровой архив автора ", "Original source: the artist\'s digital archive ") + src)
+        if x["status"] == "author" and lang == "ru": biblio.append("Оригинал на английском языке; русский текст — перевод музея.")
+        others = [sl for sl in g[3] if sl != slug] + [sl for sl in LIB_SEQ[i + 1:] + LIB_SEQ[:i] if sl not in g[3]]
+        others = others[:3]
+        body = f'''<article class="wrap essay" lang="{lang}"><header class="essay-head"><p class="lib-rubric">{g[0]}. {e(L(lang, g[1], g[2]))}</p><h1>{e(L(lang, x["ru"], x["en"]))}</h1>
+<p class="sub">{e(sub)}</p><p class="lib-ann big-ann">{e(L(lang, m[3], m[4]))}</p>
+<p class="lib-meta">{e(lib_author(x, lang))} · {e(L(lang, m[0], m[1]))}</p>{"".join(f'<p class="biblio">{b_}</p>' for b_ in biblio)}</header>
+<div class="essay-body">{render_blocks(x["blocks"], lang)}</div>
+<footer class="essay-foot"><section class="others"><h2>{L(lang, "Другие исследования", "Further studies")}</h2><ol class="lib-list">{"".join(lib_entry(o_, lang) for o_ in others)}</ol>
+<p><a class="lib-read" href="{url(lang, "/theory/")}">{L(lang, "Вся библиотека", "The whole library")} →</a></p></section>
+<section class="cite"><h3>{L(lang, "Как цитировать", "How to cite")}</h3><p>{cite(lang, x, p)}</p></section></footer></article>'''
+        ld = [{"@type": "Article", "headline": L(lang, x["ru"], x["en"]), "alternativeHeadline": sub, "abstract": L(lang, m[3], m[4]), "genre": L(lang, m[0], m[1]),
+               "inLanguage": lang, "url": absu(url(lang, p)), "mainEntityOfPage": absu(url(lang, p)),
                "author": {"@id": SITE_URL + "/#nona"} if x["status"] == "author" else {"@type": "Organization", "name": P.SITE[lang]},
-               "about": "Botanical painting, colour theory", "isPartOf": {"@id": SITE_URL + "/#site"}, "dateModified": TODAY}]
-        page(lang, p, "theory", L(lang, x["ru"], x["en"]) + L(lang, " — теория живописи", " — painting theory"), first_desc[:158].rsplit(" ", 1)[0] + "…",
-             body, crumbs=[home_crumb(lang), (L(lang, "Теория", "Theory"), "/theory/"), (L(lang, x["ru"], x["en"]), p)], ld=ld)
+               "about": ["Botanical Expressionism", "Painting theory", "Colour"], "isPartOf": {"@type": "CollectionPage", "name": L(lang, TH.LIB_TITLE_RU, TH.LIB_TITLE_EN), "url": absu(url(lang, "/theory/"))},
+               "publisher": {"@id": SITE_URL + "/#site"}}]
+        page(lang, p, "theory", L(lang, x["ru"], x["en"]) + L(lang, " — художественная теория", " — artistic theory"), L(lang, m[3], m[4])[:158].rsplit(" ", 1)[0] + "…",
+             body, crumbs=[home_crumb(lang), (L(lang, TH.LIB_TITLE_RU, TH.LIB_TITLE_EN), "/theory/"), (L(lang, x["ru"], x["en"]), p)], ld=ld)
     # glossary
     p = "/theory/glossary/"
     dl = "".join(f'<div id="g{i}"><dt>{e(L(lang, a, b))}</dt><dd>{e(L(lang, c, d))}</dd></div>' for i, (a, b, c, d) in enumerate(GLOSSARY))
@@ -624,7 +652,7 @@ def build_theory(lang):
     ld = [{"@type": "DefinedTermSet", "name": L(lang, "Глоссарий", "Glossary"), "hasDefinedTerm": [{"@type": "DefinedTerm", "name": L(lang, a, b), "description": L(lang, c, d)} for a, b, c, d in GLOSSARY]}]
     page(lang, p, "theory", L(lang, "Глоссарий терминов теории живописи", "Glossary of Painting Theory Terms"),
          L(lang, "Доминирующий контраст, хроматическая непрерывность, импасто, Impasto Bloom, постсимволизм, ботанический экспрессионизм — словарь терминов.", "Dominant contrast, chromatic continuity, impasto, Impasto Bloom, Post-Symbolism, botanical expressionism — a glossary of terms."),
-         body, crumbs=[home_crumb(lang), (L(lang, "Теория", "Theory"), "/theory/"), (L(lang, "Глоссарий", "Glossary"), p)], ld=ld)
+         body, crumbs=[home_crumb(lang), (L(lang, TH.LIB_TITLE_RU, TH.LIB_TITLE_EN), "/theory/"), (L(lang, "Глоссарий", "Glossary"), p)], ld=ld)
 
 def cite(lang, x, p):
     if lang == "ru":
@@ -752,7 +780,7 @@ def build_simple(lang):
     es = "".join(f'<li><a href="{url(lang, "/theory/" + x["slug"] + "/")}">{e(L(lang, x["ru"], x["en"]))}</a> {badge(x["status"], lang)}</li>' for x in ESSAYS + [CONTEXT])
     body = f'''<section class="wrap intro"><h1>{e(R["h1_" + lang])}</h1><p class="lead">{e(R["text_" + lang])}</p></section>
 {zenodo_section(lang)}
-<section class="wrap"><h2>{L(lang, "Тексты в музее", "Texts in the museum")}</h2><ul class="facts-list narrow">{es}</ul></section>
+<section class="wrap"><p class="eyebrow">{L(lang, "Библиотека музея", "The museum library")}</p><h2>{e(L(lang, TH.LIB_TITLE_RU, TH.LIB_TITLE_EN))}</h2><p class="lead">{e(L(lang, TH.LIB_SUB_RU, TH.LIB_SUB_EN))}</p><div class="lib">{library_html(lang)}</div></section>
 <section class="band"><div class="wrap narrow"><h2>{L(lang, "Открытые данные", "Open data")}</h2><p>{L(lang, "Каталог музея доступен в машиночитаемом виде:", "The museum's catalogue is available in machine-readable form:")} <a href="/data/catalog.json">catalog.json</a>. {L(lang, "Поля записей опираются на элементы Dublin Core (title, creator, date, format, source, rights); полная совместимость с CIDOC CRM не заявляется.", "Record fields draw on Dublin Core elements (title, creator, date, format, source, rights); full CIDOC CRM compliance is not claimed.")}</p></div></section>'''
     rld = [{"@type": "ItemList", "name": "Zenodo", "itemListElement": [{"@type": "ListItem", "position": i + 1, "item": {"@type": "ScholarlyArticle", "name": t,
             "url": PUB_.ZENODO + pid, "publisher": {"@type": "Organization", "name": "Zenodo"}, "about": {"@id": SITE_URL + "/#nona"}}} for i, (pid, t, g, cs) in enumerate(PUB_.PUBS)]}]

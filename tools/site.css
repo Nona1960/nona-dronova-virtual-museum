@@ -425,3 +425,48 @@ blockquote.pull{font-weight:400;color:var(--ink)}
   .btn{font-size:1.05rem;padding:.65rem 1.1rem}
   .stripe{height:0}
 }
+
+/* ---------- library: Artistic Theory & Research ---------- */
+.lib-head{padding-bottom:0}
+.lib-head .lead{max-width:44rem}
+.lib-intro{max-width:44rem;color:var(--graphite)}
+.lib{max-width:60rem}
+.lib-group{padding:2.6rem 0 .6rem;border-top:1px solid var(--hairline)}
+.lib-group:first-child{border-top:0}
+.lib-group h2{display:flex;align-items:baseline;gap:1.1rem;margin:0 0 .6rem}
+.lib-group .roman{font-size:.95rem;letter-spacing:.2em;color:var(--bronze-soft);min-width:2.2rem}
+.lib-list{list-style:none;margin:0;padding:0}
+.lib-entry{padding:1.6rem 0 1.7rem 3.3rem;border-bottom:1px solid var(--hairline)}
+.lib-entry:last-child{border-bottom:0}
+.lib-rubric{margin:0 0 .45rem;font-size:.86rem;letter-spacing:.16em;text-transform:uppercase;color:var(--graphite)}
+.lib-entry h3{margin:0 0 .55rem;font-size:clamp(1.6rem,2.6vw,2.1rem);font-weight:400;line-height:1.15}
+.lib-entry h3 a{color:var(--ink);text-decoration:none}
+.lib-entry h3 a:hover{color:var(--bronze)}
+.lib-ann{margin:0 0 .7rem;max-width:42rem;font-size:1.18rem;line-height:1.5;color:var(--ink)}
+.lib-meta{margin:0 0 .55rem;font-size:1rem;font-style:italic;color:var(--graphite)}
+.lib-read{font-size:1.05rem;letter-spacing:.04em;color:var(--bronze);text-decoration:none;border-bottom:1px solid var(--bronze-soft)}
+.lib-read:hover{color:var(--ink);border-color:var(--ink)}
+.lib-more{display:flex;flex-wrap:wrap;gap:1rem 2.4rem;padding:2rem 0 1rem;border-top:1px solid var(--hairline);font-size:1.15rem}
+.lib-more a{text-decoration:none}
+/* article */
+.essay{max-width:46rem}
+.essay-head{padding:1.4rem 0 1.6rem;margin-bottom:1.8rem;border-bottom:1px solid var(--hairline)}
+.essay-head h1{margin:.2rem 0 .5rem}
+.big-ann{font-size:1.3rem;line-height:1.5;margin-top:1rem}
+.biblio{margin:.2rem 0 0;font-size:.98rem;color:var(--graphite)}
+.essay-body>p{font-size:1.3rem;line-height:1.65;margin-bottom:1.1em}
+.essay-body>h2{margin:2.2rem 0 .8rem;font-size:clamp(1.7rem,2.6vw,2.15rem)}
+.essay-foot{margin-top:3rem;border-top:1px solid var(--hairline)}
+.others h2{margin:2rem 0 .4rem}
+.others .lib-entry{padding-left:0}
+.essay-foot .cite{border-top:1px solid var(--hairline);margin-top:1.6rem}
+@media (max-width:640px){
+  .lib-group{padding-top:1.8rem}
+  .lib-group h2{gap:.6rem}
+  .lib-entry{padding:1.2rem 0 1.3rem}
+  .lib-entry h3{font-size:1.45rem}
+  .lib-ann{font-size:1.08rem}
+  .essay-body>p{font-size:1.15rem}
+  .big-ann{font-size:1.15rem}
+}
+.lib-group .lib-rubric{display:none}
