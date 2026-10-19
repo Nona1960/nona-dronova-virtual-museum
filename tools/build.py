@@ -10,6 +10,7 @@ from content_collections import COLLECTIONS, ROOMS, SEASONS, GH
 from content_theory import ESSAYS, CONTEXT, GLOSSARY, THEORY_INTRO_RU, THEORY_INTRO_EN
 import content_pages as P
 import content_publications as PUB_
+from naming import fname as _fname
 from PIL import Image
 
 SITE_URL = os.environ.get("SITE_URL", "https://nona-dronova-museum.vercel.app").rstrip("/")
@@ -88,7 +89,11 @@ def coll_name(slug, lang):
 def alt(o, lang):
     if o["kind"] == "garden" or o["id"] in P.GARDEN_CAPTIONS or o["id"] in P.INTERIOR_CAPTIONS:
         cap = P.GARDEN_CAPTIONS.get(o["id"]) or P.INTERIOR_CAPTIONS.get(o["id"])
-        if cap: return cap[0] if lang == "ru" else cap[1]
+        if cap:
+            c = cap[0] if lang == "ru" else cap[1]
+            if re.search(r"Серге[йя] Дронов|Sergey Dronov", c): return c
+            pre = L(lang, "Сад «Папоротники и мох». ", "The Ferns and Moss garden. ") if o["kind"] == "garden" or o["id"] in P.GARDEN_CAPTIONS and o["id"] not in ("NDX-0039",) else ""
+            return f"{pre}{c} — {L(lang, 'Нона Дронова', 'Nona Dronova')}"
     parts = []
     if o.get("title_en") or src_title(o): parts.append(f"«{title(o, lang)}»" if lang == "ru" else f"“{title(o, lang)}”")
     elif o["collection"] in APPLIED: parts.append(title(o, lang))
@@ -102,8 +107,10 @@ def alt(o, lang):
 def author_name(o, lang):
     return L(lang, "Сергей Дронов", "Sergey Dronov") if o.get("author") == "sergey" else L(lang, "Нона Дронова", "Nona Dronova")
 
+def fn(o): return _fname(o, src_title(o) if o["kind"] == "artwork" else None)
+
 def img(o, lang, sizes="(max-width: 640px) 50vw, 320px", large=False, eager=False, cls=""):
-    s = o["id"].lower()
+    s = fn(o)
     w, h = (o["lw"], o["lh"]) if large else (o["sw"], o["sh"])
     src = f"/img/{'l' if large else 's'}/{s}.webp"
     srcset = f"/img/s/{s}.webp {o['sw']}w, /img/l/{s}.webp {o['lw']}w"
@@ -122,7 +129,8 @@ def card(o, lang, link=True, show_coll=False):
     inner = img(o, lang)
     cap = f'<span class="t">{e(title(o, lang))}</span>'
     ml = meta_line(o, lang)
-    if show_coll: ml = (coll_name(o["collection"], lang) + (" · " + ml if ml else ""))
+    ml = author_name(o, lang) + (" · " + ml if ml else "")
+    if show_coll: ml = coll_name(o["collection"], lang) + " · " + ml
     if ml: cap += f'<span class="m">{e(ml)}</span>'
     cap += f'<span class="id">{o["id"]}</span>'
     if not has_title(o): cap = cap.replace('class="t"', 'class="t muted"')
@@ -137,19 +145,23 @@ def grid(objs, lang, cls="", show_coll=False):
 def photo(o, lang, caption=True, large=True):
     cap = P.GARDEN_CAPTIONS.get(o["id"]) or P.INTERIOR_CAPTIONS.get(o["id"])
     c = (cap[0] if lang == "ru" else cap[1]) if cap else alt(o, lang)
+    if cap and not re.search(r"Серге[йя] Дронов|Sergey Dronov", c): c += " · " + L(lang, "Нона Дронова", "Nona Dronova")
     return (f'<figure class="photo">{img(o, lang, sizes="(max-width: 900px) 100vw, 900px", large=large)}'
             + (f'<figcaption>{e(c)}</figcaption>' if caption else '') + '</figure>')
 
 # ------------------------------------------------------------------ OG images (letterboxed, never cropped)
 OG_DIR = os.path.join(PUB, "og"); os.makedirs(OG_DIR, exist_ok=True)
 def og_image(oid):
-    out = os.path.join(OG_DIR, f"{oid.lower()}.jpg")
+    o = BY_ID[oid]; name = fn(o)
+    out = os.path.join(OG_DIR, f"{name}.jpg")
     if not os.path.exists(out):
-        im = Image.open(os.path.join(PUB, "img", "l", f"{oid.lower()}.webp")).convert("RGB")
+        im = Image.open(os.path.join(PUB, "img", "l", f"{name}.webp")).convert("RGB")
         im.thumbnail((1200 - 60, 630 - 60), Image.LANCZOS)
         bg = Image.new("RGB", (1200, 630), (251, 248, 241)); bg.paste(im, ((1200 - im.width) // 2, (630 - im.height) // 2))
-        bg.save(out, "JPEG", quality=82, optimize=True, progressive=True)
-    return f"/og/{oid.lower()}.jpg"
+        who = "Sergey Dronov" if o.get("author") == "sergey" else "Nona Dronova"
+        ex = Image.Exif(); ex[0x013B] = who; ex[0x8298] = f"(c) {who}. All rights reserved."
+        bg.save(out, "JPEG", quality=82, optimize=True, progressive=True, exif=ex.tobytes())
+    return f"/og/{name}.jpg"
 
 # ------------------------------------------------------------------ JSON-LD
 PERSON = {"@type": "Person", "@id": SITE_URL + "/#nona", "name": "Nona Dronova", "alternateName": "Нона Дронова",
@@ -508,7 +520,7 @@ def build_garden(lang):
 <section class="wrap"><h2>{e(G['diary_h_' + lang])}</h2><p class="narrow">{e(G['diary_' + lang])}</p><div class="diary">{diary}</div>
 <p class="small">{L(lang, 'Фотографии сада — из архива «The Garden as Art». Авторство фотографий будет уточнено.', 'Garden photographs from The Garden as Art archive. Photo credits to be confirmed.')}</p></section>'''
     ld = [SERGEY, {"@type": "CreativeWork", "name": L(lang, "Сад «Папоротники и мох»", "The Ferns and Moss Garden"), "creator": {"@id": SITE_URL + "/#sergey"},
-                   "image": [absu(f"/img/l/{o['id'].lower()}.webp") for o in gphotos[:6]], "url": absu(url(lang, path))}]
+                   "image": [absu(f"/img/l/{fn(o)}.webp") for o in gphotos[:6]], "url": absu(url(lang, path))}]
     page(lang, path, "garden", L(lang, "Сад как искусство", "The Garden as Art"),
          L(lang, "Сад «Папоротники и мох» Сергея Дронова и двадцать залов живописи Ноны Дроновой: сезонная тропа от весны к тени леса, дневник сада, путь от сада к картине.",
            "Sergey Dronov's Ferns and Moss garden and the twenty painting rooms of Nona Dronova: a seasonal path from spring to woodland shade, a garden diary and the way from garden to painting."),
@@ -716,7 +728,7 @@ def build_about(lang):
   <div><h2>{L(lang, "Мастерская", "The studio")}</h2>{photo(BY_ID[STUDIO_ID], lang)}</div>
 </div></section>
 <section class="wrap"><h2>{L(lang, "Цифровые архивы автора", "The artist\'s digital archives")}</h2><p>{L(lang, "Первоисточники, из которых собран музей:", "The primary sources from which the museum is assembled:")}</p><ul class="cols">{arch}</ul></section>'''
-    ld = [dict(PERSON, image=absu(f"/img/l/{PORTRAIT_ID.lower()}.webp"), description=L(lang, AB.SUB_RU, AB.SUB_EN),
+    ld = [dict(PERSON, image=absu(f"/img/l/{fn(BY_ID[PORTRAIT_ID])}.webp"), description=L(lang, AB.SUB_RU, AB.SUB_EN),
                knowsAbout=["Botanical painting", "Botanical Expressionism", "Textile art", "Silver jewellery", "Art education"]),
           {"@type": "ProfilePage", "url": absu(url(lang, path)), "mainEntity": {"@id": SITE_URL + "/#nona"}, "inLanguage": lang, "dateModified": TODAY}]
     page(lang, path, "about", L(lang, "Нона Дронова — художник, исследователь ботанического экспрессионизма", "Nona Dronova — Artist and Researcher of Botanical Expressionism"),
@@ -840,7 +852,7 @@ def build_object(o, lang):
     neigh = [x for x in same if x is not o][:6]
     body = f'''<article class="object wrap">
   <figure class="object-art">{img(o, lang, sizes="(max-width: 900px) 100vw, 60vw", large=True, eager=True)}
-  <figcaption><a href="/img/l/{oid.lower()}.webp">{L(lang, "Открыть изображение крупно", "Open large image")}</a></figcaption></figure>
+  <figcaption>© {author_name(o, lang) if o["kind"] == "artwork" else L(lang, "Нона Дронова", "Nona Dronova")} · <a href="/img/l/{fn(o)}.webp">{L(lang, "Открыть изображение крупно", "Open large image")}</a></figcaption></figure>
   <div class="object-info">
     <p class="eyebrow">{e(coll_name(cslug, lang))}</p>
     <h1 class="{'' if has_title(o) or o['kind'] != 'artwork' else 'muted'}">{e(ttl)}</h1>
@@ -853,7 +865,9 @@ def build_object(o, lang):
 </article>
 {f'<section class="wrap"><h2>{L(lang, "Из той же коллекции", "From the same collection")}</h2>{grid(neigh, lang)}</section>' if neigh else ''}'''
     ld_obj = {"@type": "VisualArtwork" if o["kind"] == "artwork" else "Photograph", "name": ttl, "identifier": oid, "url": absu(url(lang, path)),
-              "image": absu(f"/img/l/{oid.lower()}.webp"), "isPartOf": {"@type": "Collection", "name": coll_name(cslug, lang)}, "inLanguage": lang}
+              "image": {"@type": "ImageObject", "contentUrl": absu(f"/img/l/{fn(o)}.webp"), "creditText": author_name(o, lang) if o["kind"] == "artwork" else L(lang, "Нона Дронова", "Nona Dronova"),
+                        "creator": {"@id": SITE_URL + ("/#sergey" if o.get("author") == "sergey" else "/#nona")},
+                        "copyrightNotice": "© " + (author_name(o, lang) if o["kind"] == "artwork" else L(lang, "Нона Дронова", "Nona Dronova"))}, "isPartOf": {"@type": "Collection", "name": coll_name(cslug, lang)}, "inLanguage": lang}
     if o["kind"] == "artwork":
         who = SITE_URL + ("/#sergey" if o["author"] == "sergey" else "/#nona")
         ld_obj.update({"creator": {"@id": who}, "copyrightHolder": {"@id": who}})
@@ -887,7 +901,7 @@ def build_meta():
             u = absu(url(lang, path))
             alts = "".join(f'<xhtml:link rel="alternate" hreflang="{l}" href="{absu(url(l, path))}"/>' for l in ("ru", "en")) + \
                    f'<xhtml:link rel="alternate" hreflang="x-default" href="{absu(url("ru", path))}"/>'
-            imgs = "".join(f'<image:image><image:loc>{absu("/img/l/" + i.lower() + ".webp")}</image:loc></image:image>' for i in ims[:50])
+            imgs = "".join(f'<image:image><image:loc>{absu("/img/l/" + fn(BY_ID[i]) + ".webp")}</image:loc></image:image>' for i in ims[:50])
             pr = "1.0" if path == "/" else ("0.9" if path.count("/") <= 2 else ("0.5" if path.startswith("/archive/") else "0.7"))
             xs.append(f"<url><loc>{u}</loc><lastmod>{lm}</lastmod><priority>{pr}</priority>{alts}{imgs}</url>")
     xs.append("</urlset>")
@@ -904,6 +918,7 @@ def main():
     os.makedirs(os.path.join(PUB, "assets"), exist_ok=True)
     open(os.path.join(PUB, "assets", "site.css"), "w", encoding="utf-8").write(css)
     CSS_V = hashlib.md5(css.encode()).hexdigest()[:8]
+    shutil.rmtree(OG_DIR, ignore_errors=True); os.makedirs(OG_DIR, exist_ok=True)
     for d in ("en", "collections", "garden-as-art", "theory", "archive", "about", "education", "research", "exhibitions", "contact", "liberi", "artistic-interior-textiles"):
         shutil.rmtree(os.path.join(PUB, d), ignore_errors=True)
     for lang in ("ru", "en"):

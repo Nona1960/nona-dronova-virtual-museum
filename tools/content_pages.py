@@ -138,6 +138,7 @@ GARDEN_CAPTIONS = {  # id -> (ru, en)
   "NDX-0034": ("Папоротники и хосты сверху", "Ferns and hostas seen from above in the woodland garden"),
   "NDX-0036": ("Розовый пион в саду", "Pink peony in bloom in the garden"),
   "NDX-0033": ("Медная и серебристая листва гейхеры", "Copper and silver heuchera foliage in the garden"),
+  "NDX-0001": ("Сергей Дронов, создатель сада «Папоротники и мох»", "Sergey Dronov, creator of the Ferns and Moss garden"),
   "NDX-0002": ("Колье с аквамарином. Работа Сергея Дронова", "Aquamarine and gemstone necklace by Sergey Dronov"),
   "NDX-0003": ("Браслет, кольца и серьги с бирюзой и кораллом. Работа Сергея Дронова", "Turquoise and coral bracelet, rings and earrings by Sergey Dronov"),
 }

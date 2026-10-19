@@ -64,7 +64,7 @@ p{margin:0 0 1em}
 
 /* hero */
 .hero{padding:0 0 10px}
-.hero-art{margin:0;background:var(--ivory-deep)}
+.hero-art{margin:0}
 .hero-art img{width:100%;max-height:78vh;object-fit:contain;margin:0 auto}
 .hero-art figcaption{max-width:var(--wrap);margin:0 auto;padding:8px var(--gut);font-size:13px;color:var(--stone)}
 .hero-text{padding-top:clamp(20px,4vw,48px)}
@@ -89,7 +89,7 @@ section.wrap.intro{padding-bottom:8px}
 
 /* figures */
 .photo{margin:0}
-.photo img{width:100%;object-fit:contain;background:var(--ivory-deep)}
+.photo img{width:100%;object-fit:contain}
 .photo figcaption,.portrait figcaption{font-size:13px;color:var(--stone);padding-top:8px}
 .portrait{margin:0;justify-self:center;max-width:420px}
 .portrait img{max-height:620px;width:auto;margin:0 auto}
@@ -107,7 +107,7 @@ blockquote.pull cite{display:block;margin-top:10px;font:400 14px var(--sans);fon
 .masonry.inline{columns:4 200px;margin:1.4em 0}
 .work{display:block;break-inside:avoid;margin:0 0 26px;text-decoration:none;color:var(--ink)}
 .work figure{margin:0}
-.work img{width:100%;background:var(--ivory-deep);transition:opacity .2s}
+.work img{width:100%;transition:opacity .2s}
 a.work:hover img{opacity:.88}
 .work figcaption{padding-top:9px;display:flex;flex-direction:column;gap:2px}
 .work .t{font:600 18px/1.25 var(--serif)}
@@ -119,11 +119,11 @@ a.work:hover img{opacity:.88}
 /* cards */
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:22px;margin:22px 0}
 .cards.two{grid-template-columns:repeat(2,1fr)}
-.ccard{display:flex;flex-direction:column;background:var(--paper);border:1px solid var(--hairline);text-decoration:none;color:var(--ink);border-top:3px solid var(--accent)}
-.ccard:hover{box-shadow:0 10px 28px rgba(46,42,34,.10)}
-.thumb{display:block;position:relative;aspect-ratio:4/3;background:var(--ivory-deep);overflow:hidden}
+.ccard{display:flex;flex-direction:column;text-decoration:none;color:var(--ink)}
+.ccard:hover b{color:var(--accent)}
+.thumb{display:block;position:relative;aspect-ratio:4/3;overflow:hidden}
 .thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
-.cbody{padding:16px 18px 18px;display:flex;flex-direction:column;gap:6px}
+.cbody{padding:12px 0 6px;display:flex;flex-direction:column;gap:6px}
 .cbody b{font:600 23px/1.15 var(--serif)}
 .cbody span{font-size:14px;color:var(--graphite);line-height:1.5}
 .cbody i{font-style:normal;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-top:auto}
@@ -143,7 +143,7 @@ a.work:hover img{opacity:.88}
 .room i{font-style:normal;font-size:13px;color:var(--stone)}
 .garden-hero{padding-top:0}
 .garden-hero .intro{padding-top:clamp(20px,3vw,36px)}
-.garden-hero figure{margin:0;background:var(--ivory-deep)}
+.garden-hero figure{margin:0}
 .garden-hero figure img{width:100%;max-height:72vh;object-fit:contain;margin:0 auto}
 .pairs{display:grid;grid-template-columns:repeat(2,1fr);gap:28px;margin-top:20px}
 .pair{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
@@ -205,7 +205,7 @@ a.work:hover img{opacity:.88}
 /* object page */
 .object{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(300px,1fr);gap:clamp(22px,4vw,56px);padding-top:18px;padding-bottom:30px;align-items:start}
 .object-art{margin:0;position:sticky;top:76px}
-.object-art img{width:100%;max-height:82vh;object-fit:contain;background:var(--ivory-deep)}
+.object-art img{width:100%;max-height:82vh;object-fit:contain}
 .object-art figcaption{font-size:13px;padding-top:8px}
 .object-info h1{font-size:clamp(30px,3.6vw,46px)}
 .object-info .meta{font-size:15px;color:var(--graphite)}
@@ -247,8 +247,6 @@ a.work:hover img{opacity:.88}
 .foot-bottom{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;border-top:1px solid rgba(255,255,255,.2);margin-top:30px;padding-top:16px;font-size:13px;color:#BFD0EE}
 
 /* section variants */
-body.liberi .work img{background:#EDEDEB}
-body.textile .work img{background:#EFE6DA}
 
 /* ---------- tablet ---------- */
 @media (max-width:900px){
@@ -281,7 +279,7 @@ body.textile .work img{background:#EFE6DA}
   .work .t{font-size:15.5px}.work .m{font-size:12px}.work .id{font-size:10px}
   .cards{grid-template-columns:1fr 1fr;gap:10px}
   .cards.two{grid-template-columns:1fr 1fr}
-  .cbody{padding:10px 10px 12px}.cbody b{font-size:18px}.cbody span{font-size:12.5px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .cbody{padding:8px 0 4px}.cbody b{font-size:18px}.cbody span{font-size:12.5px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
   .seasons{gap:10px}.season b{font-size:18px}
   .rooms{grid-template-columns:1fr 1fr;gap:10px}.room b{font-size:17px}
   .pair{grid-template-columns:1fr 1fr;gap:8px}

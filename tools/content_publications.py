@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Zenodo publications (found 19.10.2026 via search of zenodo.org records). Titles are originals.
+"""Zenodo publications (found 19.10.2026 via search of zenodo.org records; authorship of all confirmed by the artist 19.10.2026). Titles are originals.
 (record id, title, group, related collections)"""
 ZENODO = "https://zenodo.org/records/"
 GROUPS = [
@@ -32,4 +32,5 @@ PUBS = [
   ("17516139", "Interview with Professor Nona Dronova: Light, Color, and the Philosophical Order of Painting", "interviews", []),
   ("17279864", "Interview with the Artist Nona Dronova On Freedom, Balance, and Decorative Painting (Based on the series “Leaves. 2023”)", "interviews", ["leaves"]),
   ("21427976", "Art of Jewellery: A Digital Archive of Exclusive Silver Jewellery, Gemmological Design, and Wearable Art by Nona Dronova", "jewellery", ["liberi", "jewellery"]),
+  ("23418357", "Market Valuation of Jewelry Raw Materials", "jewellery", []),
 ]
