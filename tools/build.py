@@ -9,6 +9,7 @@ sys.path.insert(0, HERE)
 from content_collections import COLLECTIONS, ROOMS, SEASONS, GH
 from content_theory import ESSAYS, CONTEXT, GLOSSARY, THEORY_INTRO_RU, THEORY_INTRO_EN
 import content_pages as P
+import content_publications as PUB_
 from PIL import Image
 
 SITE_URL = os.environ.get("SITE_URL", "https://nona-dronova-museum.vercel.app").rstrip("/")
@@ -392,6 +393,23 @@ def build_collections(lang):
         if c.get("page"): continue
         build_collection(c, lang)
 
+def pub_li(pid, t, lang):
+    return (f'<li class="pub"><a href="{PUB_.ZENODO}{pid}" rel="noopener" target="_blank" lang="en">{e(t)}</a>'
+            f'<span class="pub-src">Zenodo · {pid} ↗</span></li>')
+
+def pubs_for(slug):
+    return [(pid, t) for pid, t, g, cs in PUB_.PUBS if slug in cs]
+
+def zenodo_section(lang):
+    out = f'<section class="wrap" id="zenodo"><p class="eyebrow">Zenodo</p><h2>{L(lang, "Публикации на Zenodo", "Publications on Zenodo")}</h2><p class="narrow">' + \
+          L(lang, "Статьи, эссе и интервью о творчестве Ноны Дроновой в открытом научном репозитории Zenodo. Названия приведены в оригинале; ссылки открывают запись на Zenodo.",
+              "Articles, essays and interviews on the work of Nona Dronova in the open research repository Zenodo. Links open the record on Zenodo.") + "</p>"
+    for g, ru, en in PUB_.GROUPS:
+        items = "".join(pub_li(pid, t, lang) for pid, t, gg, cs in PUB_.PUBS if gg == g)
+        out += f'<h3>{e(L(lang, ru, en))}</h3><ul class="pubs">{items}</ul>'
+    out += f'<p><a class="btn ghost" href="https://zenodo.org/search?q=%22Nona%20Dronova%22" rel="noopener" target="_blank">{L(lang, "Все записи на Zenodo", "All records on Zenodo")} ↗</a></p></section>'
+    return out
+
 def related_essays(slug):
     out = []
     for es in ESSAYS:
@@ -418,6 +436,10 @@ def build_collection(c, lang):
     if rel:
         relh = f'<aside class="wrap related"><h2>{L(lang, "Теория к этой коллекции", "Theory for this collection")}</h2><ul class="essay-list">' + "".join(
             f'<li><a href="{url(lang, "/theory/" + x["slug"] + "/")}"><b>{x["n"]}</b> {e(L(lang, x["ru"], x["en"]))}</a></li>' for x in rel) + '</ul></aside>'
+    cp = pubs_for(c["slug"])
+    if cp:
+        relh += (f'<aside class="wrap related"><h2>{L(lang, "Публикации о коллекции", "Publications on this collection")}</h2><ul class="pubs">'
+                 + "".join(pub_li(pid, t, lang) for pid, t in cp) + f'</ul><p class="small"><a href="{url(lang, "/research/")}#zenodo">{L(lang, "Все публикации", "All publications")}</a></p></aside>')
     rooms = [r for r in ROOMS if any(r[1] in (o.get("rooms") or []) for o in ws)]
     roomh = ""
     if rooms:
@@ -558,7 +580,7 @@ def build_theory(lang):
     body = f'''<section class="wrap intro"><p class="eyebrow">Theory of Contemporary Painting</p><h1>{L(lang, "Теория современной живописи", "The Theory of Contemporary Painting")}</h1>
 <p class="lead">{e(L(lang, THEORY_INTRO_RU, THEORY_INTRO_EN))}</p></section>
 <section class="wrap"><ol class="essays">{items}</ol>
-<p>{btn(lang, "/theory/glossary/", "Глоссарий терминов", "Glossary of terms", "btn ghost")}</p></section>'''
+<div class="btns">{btn(lang, "/theory/glossary/", "Глоссарий терминов", "Glossary of terms", "btn ghost")}{btn(lang, "/research/#zenodo", "Публикации на Zenodo", "Publications on Zenodo", "btn ghost")}</div></section>'''
     page(lang, path, "theory", L(lang, "Теория современной живописи", "The Theory of Contemporary Painting"),
          L(lang, "Тексты Ноны Дроновой о цвете, контрасте, мазке и пастозной живописи — курс теории современной ботанической живописи с произведениями и вопросами для наблюдения.",
            "Nona Dronova's texts on colour, contrast, brushwork and impasto — a course in the theory of contemporary botanical painting with works and questions for looking."),
@@ -668,7 +690,7 @@ def build_about(lang):
         if sid == "research":
             body_ += '<ul class="facts-list">' + "".join(f"<li><em>{e(L(lang, a, b))}</em></li>" for a, b in AB.THEMES) + "</ul>"
             body_ += f'<aside class="note-box">{e(L(lang, AB.THEMES_NOTE_RU, AB.THEMES_NOTE_EN))}</aside>'
-            body_ += f'<p>{btn(lang, "/theory/", "Теория современной живописи", "The Theory of Contemporary Painting", "btn ghost")}</p>'
+            body_ += f'<div class="btns">{btn(lang, "/theory/", "Теория современной живописи", "The Theory of Contemporary Painting", "btn ghost")}{btn(lang, "/research/#zenodo", "Публикации на Zenodo", "Publications on Zenodo", "btn ghost")}</div>'
         if sid == "education":
             body_ += f'<p>{btn(lang, "/education/", "Педагогическая лаборатория", "Teaching laboratory", "btn ghost")}</p>'
         if ill: body_ += about_strip(ill, lang)
@@ -717,12 +739,15 @@ def build_simple(lang):
     tp = "".join(f'<li>{e(L(lang, a, b))} <span class="badge b-project">{L(lang, "Планируется", "Planned")}</span></li>' for a, b in R["topics"])
     es = "".join(f'<li><a href="{url(lang, "/theory/" + x["slug"] + "/")}">{e(L(lang, x["ru"], x["en"]))}</a> {badge(x["status"], lang)}</li>' for x in ESSAYS + [CONTEXT])
     body = f'''<section class="wrap intro"><h1>{e(R["h1_" + lang])}</h1><p class="lead">{e(R["text_" + lang])}</p></section>
-<section class="wrap narrow"><h2>{L(lang, "Опубликованные тексты", "Published texts")}</h2><ul class="facts-list">{es}</ul></section>
+{zenodo_section(lang)}
+<section class="wrap"><h2>{L(lang, "Тексты в музее", "Texts in the museum")}</h2><ul class="facts-list narrow">{es}</ul></section>
 <section class="band"><div class="wrap narrow"><h2>{L(lang, "Открытые данные", "Open data")}</h2><p>{L(lang, "Каталог музея доступен в машиночитаемом виде:", "The museum's catalogue is available in machine-readable form:")} <a href="/data/catalog.json">catalog.json</a>. {L(lang, "Поля записей опираются на элементы Dublin Core (title, creator, date, format, source, rights); полная совместимость с CIDOC CRM не заявляется.", "Record fields draw on Dublin Core elements (title, creator, date, format, source, rights); full CIDOC CRM compliance is not claimed.")}</p></div></section>'''
+    rld = [{"@type": "ItemList", "name": "Zenodo", "itemListElement": [{"@type": "ListItem", "position": i + 1, "item": {"@type": "ScholarlyArticle", "name": t,
+            "url": PUB_.ZENODO + pid, "publisher": {"@type": "Organization", "name": "Zenodo"}, "about": {"@id": SITE_URL + "/#nona"}}} for i, (pid, t, g, cs) in enumerate(PUB_.PUBS)]}]
     page(lang, path, "research", L(lang, "Исследования и публикации", "Research and Publications"),
-         L(lang, "Тексты и исследования о творчестве Ноны Дроновой: теория современной живописи, ботанический экспрессионизм и открытые данные каталога.",
-           "Texts and research on the work of Nona Dronova: the theory of contemporary painting, botanical expressionism and the catalogue's open data."),
-         body, crumbs=[home_crumb(lang), (L(lang, "Исследования", "Research"), path)])
+         L(lang, "Публикации Ноны Дроновой на Zenodo: ботанический экспрессионизм, постсимволизм, цвет, композиция, серии «Пионы», «Розы», «Лилейники», интервью.",
+           "Nona Dronova's publications on Zenodo: botanical expressionism, Post-Symbolism, colour, composition, the Peonies, Roses and Daylilies series, interviews."),
+         body, crumbs=[home_crumb(lang), (L(lang, "Исследования", "Research"), path)], ld=rld)
     X = P.EXHIBITIONS; path = "/exhibitions/"
     its = ""
     for ru, en, cs in X["items"]:

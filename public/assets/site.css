@@ -192,6 +192,11 @@ a.work:hover img{opacity:.88}
 .bio-sec>p{font-size:18px;line-height:1.75}
 .bio-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0 6px}
 .closing-quote{font-size:clamp(24px,2.8vw,32px);margin:40px 0}
+.pubs{list-style:none;padding:0;margin:10px 0 24px;max-width:900px}
+.pub{padding:12px 0;border-bottom:1px solid var(--hairline);display:flex;flex-direction:column;gap:3px}
+.pub a{font:600 19px/1.35 var(--serif);color:var(--ink);text-decoration:none}
+.pub a:hover{color:var(--accent);text-decoration:underline}
+.pub-src{font-size:12px;letter-spacing:.06em;color:var(--stone)}
 /* badges */
 .badge{display:inline-block;font:600 10.5px/1.5 var(--sans);letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border:1px solid currentColor;border-radius:var(--r);white-space:nowrap;vertical-align:middle}
 .b-author{color:#7A4E1E}.b-museum{color:#3F5F8A}.b-confirmed{color:var(--green)}.b-stated{color:#9A6A00}
