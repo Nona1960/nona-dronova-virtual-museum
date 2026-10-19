@@ -309,3 +309,119 @@ a.work:hover img{opacity:.88}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 @media print{.site-header,.site-footer,.stripe,.filters,.pager{display:none}}
+
+/* ==========================================================
+   THEME «Наука о камнях» — single serif face, bronze accents,
+   warm paper, soft ink. Overrides the defaults above.
+   ========================================================== */
+:root{
+  --ivory:#f8f6f1; --ivory-deep:#f0ece3; --paper:#fbfaf6;
+  --ink:#2a2622; --graphite:#6b6359; --stone:#958b7d; --hairline:#ddd5c6;
+  --bronze:#8a6634; --bronze-soft:#b89a6c;
+  --green:#8a6634; --emerald:#8a6634; --cobalt:#8a6634;
+  --serif:"Cormorant Garamond","Cormorant",Garamond,"Times New Roman",serif;
+  --sans:var(--serif);
+}
+body,.ccard,[style*="--accent"]{--accent:#8a6634!important}
+body{font:400 1.25rem/1.55 var(--serif);color:var(--ink);background:var(--ivory);-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--serif);font-weight:400;letter-spacing:0}
+h1{color:var(--bronze);font-size:clamp(2.5rem,4.8vw,3.8rem);line-height:1.06}
+h2{color:var(--bronze);font-size:clamp(2rem,3.4vw,2.8rem);line-height:1.12}
+h3{color:var(--ink);font-weight:600;font-size:clamp(1.3rem,2vw,1.55rem)}
+p{hyphens:auto}
+.lead,.big{font-family:var(--serif);font-style:italic;color:var(--graphite);font-size:clamp(1.35rem,2.2vw,1.55rem);line-height:1.42}
+.big{font-style:normal;color:var(--ink)}
+.eyebrow{font:400 .95rem/1.4 var(--serif);letter-spacing:.16em;text-transform:uppercase;color:var(--graphite)}
+.small{font-size:1.05rem;color:var(--graphite)}
+a{color:var(--bronze)}
+a:hover{color:var(--ink)}
+/* header */
+.site-header{background:rgba(248,246,241,.96);border-bottom:1px solid var(--hairline)}
+.brand b{font:500 1.6rem/1 var(--serif);letter-spacing:.02em;color:var(--ink)}
+.brand i{font:400 .82rem/1.6 var(--serif);letter-spacing:.16em;color:var(--graphite)}
+.nav a{font:400 1.12rem/1 var(--serif);color:var(--graphite);padding:8px 2px;margin:0 9px;border-bottom:1px solid transparent;border-radius:0}
+.nav a:hover{background:none;color:var(--ink)}
+.nav a[aria-current]{background:none;color:var(--bronze);border-bottom-color:var(--bronze)}
+.lang{font:500 .95rem/1 var(--serif);letter-spacing:.12em;border-color:var(--hairline);color:var(--graphite)}
+.menu nav a{font-size:1.15rem;font-family:var(--serif)}
+.crumbs ol{font-size:.95rem;letter-spacing:.12em;text-transform:uppercase}
+.crumbs a{color:var(--bronze)}
+/* buttons */
+.btn{font:400 1.12rem/1 var(--serif);letter-spacing:.02em;padding:.7rem 1.35rem;background:var(--bronze);border:1px solid var(--bronze);color:var(--paper);border-radius:0}
+.btn:hover{background:var(--paper);color:var(--bronze)}
+.btn.ghost{background:transparent;color:var(--bronze);border-color:var(--bronze)}
+.btn.ghost:hover{background:var(--bronze);color:var(--paper)}
+/* works & cards */
+.work .t{font:500 1.18rem/1.25 var(--serif);color:var(--ink)}
+.work .m{font-size:1rem;color:var(--graphite)}
+.work .id{font:400 .82rem/1.4 var(--serif);letter-spacing:.12em;color:var(--stone)}
+.work .note{font-size:1rem}
+.cbody b{font:400 1.6rem/1.15 var(--serif);color:var(--ink)}
+.cbody span{font-size:1.05rem;color:var(--graphite)}
+.cbody i{font-size:.85rem;letter-spacing:.14em;color:var(--bronze)}
+.ccard:hover b{color:var(--bronze)}
+.season b,.room b{font-weight:500;font-size:1.4rem}
+.season span:last-child,.room i,.room .rn{font-size:.98rem}
+.room .rn{letter-spacing:.14em;color:var(--bronze)}
+.stats{border-color:var(--hairline)}
+.stats div{background:var(--ivory)}
+.stats b{font-weight:400;color:var(--bronze)}
+.stats span{font-size:1rem;color:var(--graphite)}
+.photo figcaption,.portrait figcaption,.hero-art figcaption,.object-art figcaption{font-size:1rem;font-style:italic;color:var(--graphite)}
+/* quotes & boxes */
+blockquote.pull,.quote-card{border-left:2px solid var(--bronze-soft)}
+blockquote.pull{font-weight:400;color:var(--ink)}
+.quote-card{background:transparent;padding-left:1.5rem}
+.quote-card blockquote{font-weight:400}
+.quote-card cite,blockquote.pull cite{font:400 .98rem var(--serif);letter-spacing:.12em;text-transform:uppercase;color:var(--graphite)}
+.definition{background:transparent;border:0;border-left:2px solid var(--bronze-soft);padding:6px 0 6px 1.5rem;font-weight:400}
+.questions{background:var(--ivory-deep);border-left:2px solid var(--bronze-soft)}
+.questions h3{color:var(--bronze);font-weight:400}
+.note-box{border:0;border-left:2px solid var(--hairline);background:transparent;font-size:1.08rem;font-style:italic}
+.principle-cards li,.modules li,.exh,.essay-card{background:transparent;border:0;border-top:1px solid var(--hairline);padding-left:0;padding-right:0}
+.principle-cards b,.badge{font:400 .8rem/1.5 var(--serif);letter-spacing:.14em}
+.principle-cards p{font-size:1.08rem}
+.essay-card{grid-template-columns:70px 1fr auto}
+.essay-card .n{font-weight:400;color:var(--bronze-soft)}
+.essay-card b{font-weight:400;font-size:1.7rem}
+.essay-card i{font-size:1.05rem}
+.essay>p,.bio-sec>p{font-size:1.28rem;line-height:1.6}
+.essay .sub{font-weight:400;color:var(--graphite)}
+.essay .meta{font-size:1rem}
+.principles li{border-color:var(--hairline)}
+.principles b{font:400 .95rem var(--serif);color:var(--bronze)}
+.badge{border-color:currentColor}
+.b-author,.b-museum,.b-confirmed,.b-stated,.b-works,.b-project,.b-hypothesis{color:var(--bronze)}
+.record div{font-size:1.08rem}
+.record dt{color:var(--graphite)}
+.pub a{font:500 1.25rem/1.35 var(--serif)}
+.pub-src{font-size:.9rem;letter-spacing:.1em}
+.glossary dt{font-weight:500;color:var(--ink)}
+.bio-toc{font-size:1.05rem}
+.filters{background:var(--ivory);border-color:var(--hairline)}
+.filters label{font-size:.95rem;letter-spacing:.1em;text-transform:uppercase}
+.filters input[type=search],.filters select{font:400 1.1rem var(--serif);border:0;border-bottom:1px solid var(--graphite);background:transparent;border-radius:0}
+.filters .chk{font-size:1.05rem;text-transform:none;letter-spacing:0}
+.filters output{font-weight:400;color:var(--bronze)}
+.band{background:var(--ivory-deep)}
+.garden-band{background:var(--ivory-deep)}
+/* calm footer as on «Наука о камнях» */
+.stripe{height:0;border-top:1px solid var(--hairline);background:none}
+.site-footer{background:var(--ivory-deep);color:var(--ink);border-top:1px solid var(--hairline)}
+.site-footer a{color:var(--ink)}
+.site-footer a:hover{color:var(--bronze)}
+.brand.light b{color:var(--ink)}.brand.light i{color:var(--graphite)}
+.foot p{color:var(--graphite)}
+.foot-links a{font-size:1.1rem}
+.foot-bottom{border-top-color:var(--hairline);color:var(--graphite);font-size:1rem}
+@media (max-width:640px){
+  body{font-size:1.15rem;line-height:1.55}
+  .brand b{font-size:1.35rem}.brand i{font-size:.72rem}
+  .work .t{font-size:1.05rem}.work .m{font-size:.92rem}.work .id{font-size:.75rem}
+  .cbody b{font-size:1.3rem}.cbody span{font-size:.98rem}
+  .essay>p,.bio-sec>p{font-size:1.15rem}
+  .essay-card{grid-template-columns:44px 1fr}
+  .essay-card b{font-size:1.4rem}
+  .btn{font-size:1.05rem;padding:.65rem 1.1rem}
+  .stripe{height:0}
+}
