@@ -11,6 +11,7 @@ from content_theory import ESSAYS, CONTEXT, GLOSSARY, THEORY_INTRO_RU, THEORY_IN
 import content_theory as TH
 import content_pages as P
 import content_publications as PUB_
+import content_new2026 as NEW
 from naming import fname as _fname
 from PIL import Image
 
@@ -974,6 +975,48 @@ def build_404():
         html_ = h + header(lang, "/", "") + body + footer(lang)
         if lang == "ru": open(os.path.join(PUB, "404.html"), "w", encoding="utf-8").write(html_)
 
+# ------------------------------------------------------------------ new acquisitions 2026
+def new2026_caption(w, lang):
+    name, ru, en, oil, mru, men = w
+    bits = [L(lang, "Нона Дронова", "Nona Dronova"), f"«{ru}»" if lang == "ru" else en]
+    if oil: bits.append(L(lang, "холст, масло", "oil on canvas"))
+    bits.append(f"{mru} 2026" if (lang == "ru" and mru) else (f"{men} 2026" if (lang == "en" and men) else "2026"))
+    return ", ".join(bits)
+
+def new2026_og():
+    name = NEW.SECTIONS[0]["works"][0][0]; out = os.path.join(OG_DIR, f"{name}.jpg")
+    if not os.path.exists(out):
+        im = Image.open(os.path.join(PUB, "img", "new-2026", name + ".webp")).convert("RGB")
+        im.thumbnail((1140, 570), Image.LANCZOS)
+        bg = Image.new("RGB", (1200, 630), (251, 248, 241)); bg.paste(im, ((1200 - im.width) // 2, (630 - im.height) // 2))
+        bg.save(out, "JPEG", quality=82, optimize=True, progressive=True)
+    return f"/og/{name}.jpg"
+
+def build_new2026(lang):
+    path = NEW.PATH; secs = ""; ld_items = []; images = []
+    for s in NEW.SECTIONS:
+        figs = ""
+        for w in s["works"]:
+            name = w[0]; im = Image.open(os.path.join(PUB, "img", "new-2026", name + ".webp")); W, H = im.size
+            cap = new2026_caption(w, lang); src = f"/img/new-2026/{name}.webp"
+            figs += (f'<figure class="new-work" id="{name}"><img src="{src}" srcset="/img/new-2026/{name}-640.webp 640w, {src} {W}w" '
+                     f'sizes="(max-width: 1400px) 100vw, 1400px" width="{W}" height="{H}" alt="{e(cap)}" decoding="async" loading="lazy">'
+                     f'<figcaption>{e(cap)}</figcaption></figure>')
+            images.append(src)
+            ld_items.append({"@type": "VisualArtwork", "name": w[1] if lang == "ru" else w[2], "image": absu(src), "dateCreated": "2026",
+                             "creator": {"@id": SITE_URL + "/#nona"}, **({"artMedium": L(lang, "масло", "oil"), "artworkSurface": L(lang, "холст", "canvas")} if w[3] else {})})
+        secs += (f'<section class="new-section" id="{s["id"]}"><div class="wrap"><h2>{e(L(lang, s["ru"], s["en"]))}</h2>'
+                 f'<p class="small">{e(L(lang, s["sub_ru"], s["sub_en"]))}</p></div><div class="new-works">{figs}</div></section>')
+    toc = " · ".join(f'<a href="#{s["id"]}">{e(L(lang, s["ru"], s["en"]))}</a>' for s in NEW.SECTIONS)
+    body = (f'<section class="wrap intro"><p class="eyebrow">{L(lang, "Новые поступления", "New acquisitions")}</p>'
+            f'<h1>{e(L(lang, NEW.TITLE_RU, NEW.TITLE_EN))}</h1><p class="lead">{e(L(lang, NEW.LEAD_RU, NEW.LEAD_EN))}</p><p>{toc}</p></section>' + secs)
+    ld = [{"@type": "CollectionPage", "name": L(lang, NEW.TITLE_RU, NEW.TITLE_EN), "url": absu(url(lang, path)),
+           "author": {"@id": SITE_URL + "/#nona"}, "hasPart": ld_items}]
+    page(lang, path, "new-2026", L(lang, "Новые поступления: живопись Ноны Дроновой, 2026", "New Acquisitions: Paintings by Nona Dronova, 2026"),
+         L(lang, "Новые картины Ноны Дроновой, написанные в саду в 2026 году: серия «Дороги в саду» и «Сезоны в саду» — роджерсия, лилейники, маки, ирисы, колокольчики, таволга, астильба, гладиолусы.",
+           "New paintings by Nona Dronova written in her garden in 2026: the series Roads in the Garden and Seasons in the Garden — rodgersia, daylilies, poppies, irises, bellflowers, meadowsweet, astilbe, gladioli."),
+         body, crumbs=[home_crumb(lang), (L(lang, "Новые поступления 2026", "New Acquisitions 2026"), path)], og=new2026_og(), ld=ld, images=images)
+
 # ------------------------------------------------------------------ sitemap, robots, manifest
 def build_meta():
     xs = ['<?xml version="1.0" encoding="UTF-8"?>',
@@ -983,7 +1026,7 @@ def build_meta():
             u = absu(url(lang, path))
             alts = "".join(f'<xhtml:link rel="alternate" hreflang="{l}" href="{absu(url(l, path))}"/>' for l in ("ru", "en")) + \
                    f'<xhtml:link rel="alternate" hreflang="x-default" href="{absu(url("ru", path))}"/>'
-            imgs = "".join(f'<image:image><image:loc>{absu("/img/l/" + fn(BY_ID[i]) + ".webp")}</image:loc></image:image>' for i in ims[:50])
+            imgs = "".join(f'<image:image><image:loc>{absu(i if i.startswith("/") else "/img/l/" + fn(BY_ID[i]) + ".webp")}</image:loc></image:image>' for i in ims[:50])
             pr = "1.0" if path == "/" else ("0.9" if path.count("/") <= 2 else ("0.5" if path.startswith("/archive/") else "0.7"))
             xs.append(f"<url><loc>{u}</loc><lastmod>{lm}</lastmod><priority>{pr}</priority>{alts}{imgs}</url>")
     xs.append("</urlset>")
@@ -1001,11 +1044,11 @@ def main():
     open(os.path.join(PUB, "assets", "site.css"), "w", encoding="utf-8").write(css)
     CSS_V = hashlib.md5(css.encode()).hexdigest()[:8]
     shutil.rmtree(OG_DIR, ignore_errors=True); os.makedirs(OG_DIR, exist_ok=True)
-    for d in ("en", "collections", "garden-as-art", "theory", "archive", "about", "education", "research", "exhibitions", "contact", "liberi", "artistic-interior-textiles"):
+    for d in ("en", "new-2026", "collections", "garden-as-art", "theory", "archive", "about", "education", "research", "exhibitions", "contact", "liberi", "artistic-interior-textiles"):
         shutil.rmtree(os.path.join(PUB, d), ignore_errors=True)
     for lang in ("ru", "en"):
         build_home(lang); build_collections(lang); build_garden(lang); build_theory(lang)
-        build_textiles(lang); build_liberi(lang); build_about(lang); build_simple(lang); build_archive(lang)
+        build_textiles(lang); build_liberi(lang); build_about(lang); build_simple(lang); build_archive(lang); build_new2026(lang)
     build_404(); build_meta()
     data = json.load(open(os.path.join(PUB, "data", "catalog.json"), encoding="utf-8"))
     data["objects"] = CAT; data["updated"] = TODAY

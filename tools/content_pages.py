@@ -23,6 +23,7 @@ FOOT = [
   ("exhibitions", "Виртуальные выставки", "Virtual Exhibitions", "/exhibitions/"),
   ("glossary", "Глоссарий", "Glossary", "/theory/glossary/"),
   ("contact", "Контакты", "Contact", "/contact/"),
+  ("new-2026", "Новые поступления. Живопись Ноны Дроновой, 2026", "New Acquisitions. Paintings by Nona Dronova, 2026", "/new-2026/"),
 ]
 
 HOME = dict(

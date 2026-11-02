@@ -504,3 +504,12 @@ blockquote.pull{font-weight:400;color:var(--ink)}
 .questions .qh{font-size:clamp(1.3rem,2vw,1.55rem);margin:0 0 .5rem;color:var(--bronze);font-weight:400}
 
 .contact-mail{font-size:1.45rem;letter-spacing:.02em;color:var(--ink);user-select:all;margin:.2rem 0 1rem}
+
+/* new acquisitions 2026 — large works, no frames or backgrounds */
+.new-section{padding:clamp(20px,4vw,48px) 0}
+.new-section h2{margin-top:.4em}
+.new-works{max-width:1400px;margin:0 auto;padding:0 var(--gut)}
+.new-work{margin:0 0 clamp(40px,6vw,80px)}
+.new-work img{width:auto;max-width:100%;max-height:94vh;margin:0 auto;object-fit:contain}
+.new-work figcaption{text-align:center;font-family:var(--serif);font-style:italic;font-size:clamp(18px,1.6vw,22px);color:var(--graphite);padding-top:12px}
+@media (max-width:700px){.new-works{padding:0}.new-work img{max-height:none;width:100%}.new-work figcaption{padding:10px 16px 0}}
