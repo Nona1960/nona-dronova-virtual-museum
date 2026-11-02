@@ -1013,8 +1013,8 @@ def build_new2026(lang):
     ld = [{"@type": "CollectionPage", "name": L(lang, NEW.TITLE_RU, NEW.TITLE_EN), "url": absu(url(lang, path)),
            "author": {"@id": SITE_URL + "/#nona"}, "hasPart": ld_items}]
     page(lang, path, "new-2026", L(lang, "Новые поступления: живопись Ноны Дроновой, 2026", "New Acquisitions: Paintings by Nona Dronova, 2026"),
-         L(lang, "Новые картины Ноны Дроновой, написанные в саду в 2026 году: серия «Дороги в саду» и «Сезоны в саду» — роджерсия, лилейники, маки, ирисы, колокольчики, таволга, астильба, гладиолусы.",
-           "New paintings by Nona Dronova written in her garden in 2026: the series Roads in the Garden and Seasons in the Garden — rodgersia, daylilies, poppies, irises, bellflowers, meadowsweet, astilbe, gladioli."),
+         L(lang, "Новые картины Ноны Дроновой, написанные в саду в 2026 году: серия «Дороги в саду» и «Сезоны в саду» — роджерсия, лилейники, маки, ирисы, колокольчики, белые лилии, таволга, астильба, гладиолусы.",
+           "New paintings by Nona Dronova written in her garden in 2026: the series Roads in the Garden and Seasons in the Garden — rodgersia, daylilies, poppies, irises, bellflowers, white lilies, meadowsweet, astilbe, gladioli."),
          body, crumbs=[home_crumb(lang), (L(lang, "Новые поступления 2026", "New Acquisitions 2026"), path)], og=new2026_og(), ld=ld, images=images)
 
 # ------------------------------------------------------------------ sitemap, robots, manifest

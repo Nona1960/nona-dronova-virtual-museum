@@ -27,6 +27,7 @@ SECTIONS = [
          ("nona-dronova-red-poppies-2026", "Красные маки", "Red Poppies", True, "июнь", "June"),
          ("nona-dronova-siberian-irises-in-the-mist-2026", "Сибирские ирисы в тумане", "Siberian Irises in the Mist", True, "июнь", "June"),
          ("nona-dronova-bellflowers-2026", "Колокольчики", "Bellflowers", True, None, None),
+         ("nona-dronova-white-lilies-2026", "Белые лилии", "White Lilies", None, None, None),
          ("nona-dronova-meadowsweet-in-a-forest-glade-2026", "Таволга на лесной поляне", "Meadowsweet in a Forest Glade", True, None, None),
          ("nona-dronova-astilbe-in-bloom-2026", "Астильба цветёт", "Astilbe in Bloom", True, "август", "August"),
          ("nona-dronova-gladioli-2026", "Гладиолусы", "Gladioli", True, "август", "August"),
